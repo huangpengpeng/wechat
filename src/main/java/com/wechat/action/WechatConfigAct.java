@@ -1,6 +1,7 @@
 package com.wechat.action;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,7 +10,6 @@ import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxJsapiSignature;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.util.StringUtils;
-import me.chanjar.weixin.common.util.http.URIUtil;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
@@ -22,6 +22,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.common.util.CryptoDesUtils;
+import com.common.util.JsonUtils;
+import com.common.util.WebUtils;
+import com.common.web.RequestUtils;
 import com.common.web.ResponseUtils;
 import com.common.web.WebErrors;
 import com.common.web.session.SessionProvider;
@@ -89,8 +93,8 @@ public class WechatConfigAct {
 						partner.getAppId(), partner.getSecretKey(),
 						partner.getToken());
 				wxMpService.getJsapiTicket();
-				WxJsapiSignature signature = null;
-				signature = wxMpService.createJsapiSignature(url);
+				WxJsapiSignature signature = wxMpService
+						.createJsapiSignature(url);
 				model.addAttribute("url", url);
 				model.addAttribute("nonceStr", signature.getNoncestr());
 				model.addAttribute("timestamp", signature.getTimestamp());
@@ -105,48 +109,64 @@ public class WechatConfigAct {
 			errors.toModel(model);
 		}
 	}
+	
 
 	@RequestMapping(value = "/wechat_config/oauth2_{pId}.html")
 	public String oauthSubmit(HttpServletRequest request, ModelMap model,
-			@PathVariable("pId") Long pId, String url, String event) {
+			@PathVariable("pId") Long pId, String URL) throws Exception {
 		WebErrors errors = WebErrors.create(request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model,
 					"redirect:/common/error_message.html");
 		}
-		log.info("oauth url:{}", url);
-		if (StringUtils.isBlank(url)) {
-			url = "/";
+		URL = WebUtils.getRequestURQ(request);
+		log.info("oauth url:{}", URL);
+		if (StringUtils.isBlank(URL)) {
+			URL = "/";
 		}
 		Partner partner = partnerMng.get(pId);
 		WxMpService wxMpService = wechatConfigSvc.createWxMpService(
 				partner.getAppId(), partner.getSecretKey(), partner.getToken());
+		model.addAttribute("serviceName", WebUtils.getRealm(request));
+		model.addAttribute("URI", URL);
+		model.addAttribute("pId", pId);
 		return "redirect:"
 				+ wxMpService.oauth2buildAuthorizationUrl(
-						"http://" + request.getServerName()
-								+ "/common/wechat_config/redirectURI.html?pId="
-								+ pId, WxConsts.OAUTH2_SCOPE_BASE,
-						URIUtil.encodeURIComponent(url));
+						"http://" + partner.getRealm() + "/login_wechat.html",
+						WxConsts.OAUTH2_SCOPE_BASE, CryptoDesUtils.encrypt(
+								JsonUtils.renderJson(model),
+								CryptoDesUtils.PASSWORD_CRYPT_KEY));
 	}
 
-	@RequestMapping(value = "/wechat_config/redirectURI.html")
+	@RequestMapping(value = { "/wechat_config/redirectURI.html",
+			"/login_wechat.html" })
 	public String redirectURI(HttpServletRequest request, ModelMap model,
-			Long pId, String code, String state) {
+			Long pId, String code, String state, String URI) throws Exception {
 		WebErrors errors = WebErrors.create(request);
+		errors.ifBlank(code, "CODE", 500);
+		if (session.getAttribute(request, WECHAT_OPEN_ID) != null) {
+			errors.addErrorString("invalid cod");
+		}
+		Map<String, Object> cryptoMap = CryptoDesUtils.getForMap(state,
+				CryptoDesUtils.PASSWORD_CRYPT_KEY);
+		URI = (String) cryptoMap.get("URI");
+		pId = ((Integer) cryptoMap.get("pId")).longValue();
 		if (errors.hasErrors()) {
-			return errors.showErrorPage(model,
-					"redirect:/common/error_message.html");
+			return errors
+					.showErrorPage(
+							model,
+							"redirect:"
+									+ (StringUtils.isBlank(URI) ? "/common/member/index.html"
+											: URI));
 		}
 		StringBuffer redirectURI = new StringBuffer("redirect:");
-		redirectURI.append(state);
+		redirectURI.append(URI);
 		Partner partner = partnerMng.get(pId);
 		WxMpService wxMpService = wechatConfigSvc.createWxMpService(
 				partner.getAppId(), partner.getSecretKey(), partner.getToken());
 		WxMpOAuth2AccessToken wxMpOAuth2AccessToken = null;
 		try {
-			if (session.getAttribute(request, WECHAT_OPEN_ID) == null) {
-				wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
-			}
+			wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
 		} catch (WxErrorException e) {
 			log.error("获取微信 TOKEN 失败  code :" + code, e);
 			addErrorCount(request);

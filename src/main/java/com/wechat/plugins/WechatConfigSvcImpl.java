@@ -2,14 +2,12 @@ package com.wechat.plugins;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +18,6 @@ public class WechatConfigSvcImpl implements WechatConfigSvc{
 
 	public WxMpService createWxMpService(String appId, String secret,
 			String token) {
-		WxMpInMemoryConfigStorage configStorage = new WxMpInMemoryConfigStorage();
 		configStorage.setAppId(appId);
 		configStorage.setSecret(secret);
 		configStorage.setToken(token);
@@ -34,7 +31,7 @@ public class WechatConfigSvcImpl implements WechatConfigSvc{
 		if (outMessage != null) {
 			ResponseUtils.renderXml(response, outMessage.toXml());
 		}
-}
+	}
 
 	public void addMsgHandler(String msgType, String event, String eventKey,
 			String content, String regex, WxMpMessageHandler handler) {
@@ -51,6 +48,8 @@ public class WechatConfigSvcImpl implements WechatConfigSvc{
 		}
 	}
 	
+	@Autowired
+	private WxMpInMemoryConfigStorage configStorage;
 	@Autowired
 	private WxMpMessageRouter wxMpMessageRouter;
 	@Autowired

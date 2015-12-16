@@ -17,16 +17,22 @@ import com.wechat.manager.impl.QrcodeMngImpl;
 import com.wechat.plugins.WechatConfigSvc;
 import com.wechat.service.QrcodeSvc;
 
-@Transactional(isolation = Isolation.REPEATABLE_READ)
+@Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = WxErrorException.class)
 @Service
 public class QrcodeSvcImpl implements QrcodeSvc {
-	
-	private Logger log=LoggerFactory.getLogger(QrcodeMngImpl.class);
+
+	private Logger log = LoggerFactory.getLogger(QrcodeMngImpl.class);
 
 	public Qrcode add(Long partnerId, String sign) throws WxErrorException {
 		log.info("wecaht add qrcode partnerId:{} sign:{}", partnerId, sign);
 		Partner partner = partnerMng.get(partnerId);
-		Qrcode qrcode = manager.add(partnerId, null, sign);
+		Qrcode qrcode = manager.getBySign(partner.getId(), sign);
+		if (qrcode != null && qrcode.getTicket() != null) {
+			return qrcode;
+		}
+		if (qrcode == null) {
+			qrcode = manager.add(partnerId, null, sign);
+		}
 		String ticket = wechatConfigSvc
 				.createWxMpService(partner.getAppId(), partner.getSecretKey(),
 						partner.getToken())

@@ -42,6 +42,26 @@ public class BasePartner extends BaseEntity {
 	 * 公众号密钥
 	 */
 	private String secretKey;
+	
+	/**
+	 * 商户编号
+	 */
+	private String mchId;
+	
+	/**
+	 * 签名KEY
+	 */
+	private String signKey;
+	
+	/**
+	 * 支付设备号
+	 */
+	private String deviceInfo;
+	
+	/**
+	 * 公众号授权域名
+	 */
+	private String realm;
 
 	/**
 	 * 公众号填写的token
@@ -94,4 +114,35 @@ public class BasePartner extends BaseEntity {
 		this.registerTime = registerTime;
 	}
 
+	public String getMchId() {
+		return mchId;
+	}
+
+	public void setMchId(String mchId) {
+		this.mchId = mchId;
+	}
+
+	public String getSignKey() {
+		return signKey;
+	}
+
+	public void setSignKey(String signKey) {
+		this.signKey = signKey;
+	}
+
+	public String getDeviceInfo() {
+		return deviceInfo;
+	}
+
+	public void setDeviceInfo(String deviceInfo) {
+		this.deviceInfo = deviceInfo;
+	}
+
+	public String getRealm() {
+		return realm;
+	}
+
+	public void setRealm(String realm) {
+		this.realm = realm;
+	}
 }
