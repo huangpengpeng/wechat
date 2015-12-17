@@ -19,12 +19,12 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.util.ClassUtils;
 import org.xml.sax.SAXException;
 
 import com.common.bean.NewInstance;
 import com.tencent.common.Configure;
 import com.tencent.common.Signature;
-import com.tencent.common.XMLParser;
 
 public class Config {
 
@@ -49,13 +49,10 @@ public class Config {
 	}
 
 	public void init() throws IOException {
-		Resource resource = NewInstance
-				.getResource("/WEB-INF/classes/apiclient_cert.p12");
-		File file = resource.getFile();
-		Configure.setCertLocalPath(file.getPath());
-		if (!file.exists()) {
-			throw new IllegalStateException("apiclient_cert.p12 is not found");
-		}
+		java.net.URL url = ClassUtils.getDefaultClassLoader().getResource(
+				"apiclient_cert.p12");
+		String file = url.getFile();
+		Configure.setCertLocalPath(file);
 		Configure.setCertPassword(this.getMchId());
 	}
 
@@ -125,16 +122,15 @@ public class Config {
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public String getSignFromResponseString(String responseString)
-			throws IOException, SAXException, ParserConfigurationException {
-		Map<String, Object> map = getMapFromXML(responseString);
+	public String getResponseXMLForSign(String responseXML) throws IOException,
+			SAXException, ParserConfigurationException {
+		Map<String, Object> map = getMapFromXML(responseXML);
 		// 清掉返回数据对象里面的Sign数据（不能把这个数据也加进去进行签名），然后用签名算法进行签名
 		map.put("sign", "");
 		// 将API返回的数据根据用签名算法进行计算新的签名，用来跟API返回的签名进行比较
 		return Signature.getSign(map);
 	}
-    
-    
+
 	/**
 	 * 商户编号
 	 */
@@ -312,6 +308,43 @@ public class Config {
 		 * 微信订单号
 		 */
 		public static String PRE_TRANSACTION_ID = "transaction_id";
+		/**
+		 * 交易状态
+		 */
+		public static String PRE_TRADE_STATE = "trade_state";
+		/**
+		 * 付款银行
+		 */
+		public static String PRE_BANK_TYPE = "bank_type";
+		/**
+		 * 微信分配的公众账号ID（企业号corpid即为此appId）
+		 */
+		public static String PRE_MCH_APPID = "mch_appid";
+		/**
+		 * 商户订单号，需保持唯一性
+		 */
+		public static String PRE_PARTNER_TRADE_NO = "partner_trade_no";
+		/**
+		 * NO_CHECK：不校验真实姓名 FORCE_CHECK：强校验真实姓名（未实名认证的用户会校验失败，无法转账）
+		 * OPTION_CHECK：针对已实名认证的用户才校验真实姓名（未实名认证用户不校验，可以转账成功）
+		 */
+		public static String PRE_CHECK_NAME = "check_name";
+		/**
+		 * 收款用户真实姓名。 如果check_name设置为FORCE_CHECK或OPTION_CHECK，则必填用户真实姓名
+		 */
+		public static String PRE_RE_USER_NAME = "re_user_name";
+		/**
+		 * 企业付款金额，单位为分
+		 */
+		public static String PRE_AMOUNT = "amount";
+		/**
+		 * 企业付款操作说明信息。必填。
+		 */
+		public static String PRE_DESC = "desc";
+		/**
+		 * 微信支付分配的商户号
+		 */
+		public static String PRE_MCHID = "mchid";
 	}
 
 	/**
@@ -323,7 +356,9 @@ public class Config {
 	public static class URL {
 		public static String UNIFIED_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";// 统一下单
 		public static String UNIFIED_ORDER_QUERY = "https://api.mch.weixin.qq.com/pay/orderquery";// 查询订单
-		public static String NOTIFY_URL = "/wechat_config/c.jhtml"; // 系统回调
+		public static String TRANSFERS_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers";// 查询订单
+		public static String GET_TRANSFER_INFO_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo";// 查询订单
+		public static String NOTIFY_URL = "/common/wechat_config/c.jhtml"; // 系统回调
 	}
 
 	public static Map<String, String> errorCodeMsg = new HashMap<String, String>() {

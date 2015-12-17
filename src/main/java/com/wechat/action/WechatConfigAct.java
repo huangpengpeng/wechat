@@ -1,6 +1,7 @@
 package com.wechat.action;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -127,14 +128,15 @@ public class WechatConfigAct {
 		Partner partner = partnerMng.get(pId);
 		WxMpService wxMpService = wechatConfigSvc.createWxMpService(
 				partner.getAppId(), partner.getSecretKey(), partner.getToken());
-		model.addAttribute("serviceName", WebUtils.getRealm(request));
-		model.addAttribute("URI", URL);
-		model.addAttribute("pId", pId);
+		Map<String,Object> params=new HashMap<String, Object>();
+		params.put("serviceName", WebUtils.getRealm(request));
+		params.put("URI", URL);	
+		params.put("pId", pId);
 		return "redirect:"
 				+ wxMpService.oauth2buildAuthorizationUrl(
 						"http://" + partner.getRealm() + "/login_wechat.html",
 						WxConsts.OAUTH2_SCOPE_BASE, CryptoDesUtils.encrypt(
-								JsonUtils.renderJson(model),
+								JsonUtils.renderJson(params),
 								CryptoDesUtils.PASSWORD_CRYPT_KEY));
 	}
 

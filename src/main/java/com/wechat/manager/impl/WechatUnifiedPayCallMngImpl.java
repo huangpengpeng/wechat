@@ -31,7 +31,7 @@ public class WechatUnifiedPayCallMngImpl implements WechatUnifiedPayCallMng{
 			String api, String responseText, String responseCode,
 			String responseMsg) {
 		WechatUnifiedPayCall unifiedPayCall = new WechatUnifiedPayCall(userId,
-				null, null, externalNo, null, null, null, null, null, api);
+				null, null, null, externalNo, null, responseText, responseCode, responseMsg, api);
 		unifiedPayCall.init();
 		unifiedPayCall.setId(dao.add(unifiedPayCall));
 		return unifiedPayCall;
