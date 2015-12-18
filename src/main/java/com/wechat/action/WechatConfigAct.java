@@ -25,11 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.common.util.CryptoDesUtils;
 import com.common.util.JsonUtils;
-import com.common.util.WebUtils;
-import com.common.web.RequestUtils;
 import com.common.web.ResponseUtils;
 import com.common.web.WebErrors;
 import com.common.web.session.SessionProvider;
+import com.common.web.util.WebUtils;
 import com.wechat.entity.Partner;
 import com.wechat.manager.PartnerMng;
 import com.wechat.plugins.WechatConfigSvc;

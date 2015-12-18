@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.common.util.WebUtils;
 import com.common.web.RequestUtils;
+import com.common.web.util.WebUtils;
 
 /**
  * 微信支付目录授权拦截器
