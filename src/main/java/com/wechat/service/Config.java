@@ -2,6 +2,7 @@ package com.wechat.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +12,7 @@ import java.util.TreeMap;
 import javax.xml.parsers.ParserConfigurationException;
 
 import me.chanjar.weixin.common.util.StringUtils;
+import me.chanjar.weixin.common.util.crypto.WxCryptUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,6 +25,7 @@ import org.springframework.util.ClassUtils;
 import org.xml.sax.SAXException;
 
 import com.common.bean.NewInstance;
+import com.common.util.CollectionUtils;
 import com.tencent.common.Configure;
 import com.tencent.common.Signature;
 
@@ -52,7 +55,7 @@ public class Config {
 		java.net.URL url = ClassUtils.getDefaultClassLoader().getResource(
 				"apiclient_cert.p12");
 		String file = url.getFile();
-		Configure.setCertLocalPath(file);
+		Configure.setCertLocalPath(URLDecoder.decode(file, "utf-8"));
 		Configure.setCertPassword(this.getMchId());
 	}
 
@@ -127,8 +130,10 @@ public class Config {
 		Map<String, Object> map = getMapFromXML(responseXML);
 		// 清掉返回数据对象里面的Sign数据（不能把这个数据也加进去进行签名），然后用签名算法进行签名
 		map.put("sign", "");
+		Map<String, String> params = (Map<String, String>) CollectionUtils
+				.toStringOfValueTreeMap(map);
 		// 将API返回的数据根据用签名算法进行计算新的签名，用来跟API返回的签名进行比较
-		return Signature.getSign(map);
+		return WxCryptUtil.createSign(params, this.getSignKey());
 	}
 
 	/**

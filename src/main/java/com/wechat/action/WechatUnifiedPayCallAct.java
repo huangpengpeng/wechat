@@ -119,7 +119,8 @@ public class WechatUnifiedPayCallAct {
 					partner.getSecretKey(), partner.getMchId(),
 					partner.getDeviceInfo(), partner.getSignKey());
 			Map<String, Object> res = config.getMapFromXML(responseXML);
-			if (!StringUtils.equals((String) res.get(Properties.PRE_SIGN),
+			String sign = (String) res.get(Properties.PRE_SIGN);
+			if (!StringUtils.equals(sign,
 					config.getResponseXMLForSign(responseXML))) {
 				return new ResponseConfig(res, responseXML, "-1", "签名错误", null);
 			}
