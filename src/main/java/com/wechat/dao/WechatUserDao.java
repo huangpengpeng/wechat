@@ -9,4 +9,6 @@ public interface WechatUserDao {
 	public WechatUser getByOpenId(Long partnerId,String openId);
 	
 	void update(Long id, Long externalNo);
+	
+	public void removeBinding(Long id) ;
 }

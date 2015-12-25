@@ -30,6 +30,12 @@ public class WechatUserMngImpl implements WechatUserMng{
 		dao.update(id, externalNo);
 	}
 	
+	@Override
+	public void removeBinding(Long id) {
+		dao.removeBinding(id);
+	}
+	
 	@Autowired
 	private WechatUserDao dao;
+
 }

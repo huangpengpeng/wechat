@@ -111,9 +111,10 @@ public class WechatConfigAct {
 	}
 	
 
-	@RequestMapping(value = "/wechat_config/oauth2_{pId}.html")
+	@RequestMapping(value = "/wechat_config/oauth2-{pId}-{scope}.html")
 	public String oauthSubmit(HttpServletRequest request, ModelMap model,
-			@PathVariable("pId") Long pId, String URL) throws Exception {
+			@PathVariable("pId") Long pId, String URL, @PathVariable("scope") String scope)
+			throws Exception {
 		WebErrors errors = WebErrors.create(request);
 		if (errors.hasErrors()) {
 			return errors.showErrorPage(model,
@@ -127,15 +128,15 @@ public class WechatConfigAct {
 		Partner partner = partnerMng.get(pId);
 		WxMpService wxMpService = wechatConfigSvc.createWxMpService(
 				partner.getAppId(), partner.getSecretKey(), partner.getToken());
-		Map<String,Object> params=new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("serviceName", WebUtils.getRealm(request));
-		params.put("URI", URL);	
+		params.put("URI", URL);
 		params.put("pId", pId);
 		return "redirect:"
 				+ wxMpService.oauth2buildAuthorizationUrl(
 						"http://" + partner.getRealm() + "/login_wechat.html",
-						WxConsts.OAUTH2_SCOPE_BASE, CryptoDesUtils.encrypt(
-								JsonUtils.renderJson(params),
+						scope == null ? WxConsts.OAUTH2_SCOPE_BASE : scope,
+						CryptoDesUtils.encrypt(JsonUtils.renderJson(params),
 								CryptoDesUtils.PASSWORD_CRYPT_KEY));
 	}
 
@@ -179,6 +180,7 @@ public class WechatConfigAct {
 		log.info("redirectURI url:{}", redirectURI.toString());
 		return redirectURI.toString();
 	}
+	
 
 	protected Integer addErrorCount(HttpServletRequest request) {
 		Integer errorCount = (Integer) session.getAttribute(request,

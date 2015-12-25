@@ -9,4 +9,6 @@ public interface WechatUserMng {
 	public WechatUser getByOpenId(Long partnerId,String openId);
 	
 	void update(Long id,Long externalNo);
+	
+	void removeBinding(Long id);
 }

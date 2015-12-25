@@ -38,4 +38,12 @@ public class WechatUserDaoImpl extends JdbcTemplateBaseDao implements WechatUser
 		}
 		super.update(id, sqlBuilder);
 	}
+
+	@Override
+	public void removeBinding(Long id) {
+		SqlBuilder sqlBuilder = new SqlBuilder(
+				"update WechatUser set gmtModify=current_timestamp()");
+		sqlBuilder.set("externalNo", null);
+		super.update(id, sqlBuilder);
+	}
 }
