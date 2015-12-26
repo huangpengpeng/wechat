@@ -1,6 +1,7 @@
 package com.wechat.action;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,10 +23,11 @@ public class WechatUserAct {
 	public void logout(HttpServletRequest request, ModelMap model, Long pId) {
 		WebErrors errors = validate(request, pId);
 		if (!errors.hasErrors()) {
-			String openId = (String) session.getAttribute(request,
-					WECHAT_OPEN_ID);
+			HttpSession session = request.getSession();
+			String openId = (String) session.getAttribute(WECHAT_OPEN_ID);
 			WechatUser wechatUser = manager.getByOpenId(pId, openId);
 			manager.removeBinding(wechatUser.getId());
+			session.invalidate();
 		}
 		if (errors.hasErrors()) {
 			errors.toModel(model);
@@ -33,8 +35,9 @@ public class WechatUserAct {
 	}
 	
 	private WebErrors validate(HttpServletRequest request, Long pId) {
+		HttpSession session=request.getSession();
 		WebErrors errors = WebErrors.create(request);
-		String openId = (String) session.getAttribute(request, WECHAT_OPEN_ID);
+		String openId = (String) session.getAttribute( WECHAT_OPEN_ID);
 		errors.ifBlank(openId, "授权编号", 2000);
 		errors.ifNull(pId, "合作伙伴编号");
 		if (errors.hasErrors()) {
@@ -52,8 +55,6 @@ public class WechatUserAct {
 	
 	@Autowired
 	private PartnerMng partnerMng;
-	@Autowired
-	private SessionProvider session;
 	@Autowired
 	private WechatUserMng manager;
 }
