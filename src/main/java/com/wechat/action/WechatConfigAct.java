@@ -117,7 +117,8 @@ public class WechatConfigAct {
 	public void oauthSubmit(HttpServletRequest request,
 			HttpServletResponse response, ModelMap model,
 			@PathVariable("pId") Long pId, String URL,
-			@PathVariable("scope") String scope,@PathVariable("SESSION_NAME")String SESSION_NAME) throws Exception {
+			@PathVariable("scope") String scope,
+			@PathVariable("SESSION_NAME") String SESSION_NAME) throws Exception {
 		URL = WebUtils.getRequestURQ(request);
 		log.info("oauth url:{}", URL);
 		if (StringUtils.isBlank(URL)) {
@@ -127,7 +128,8 @@ public class WechatConfigAct {
 		WxMpService wxMpService = wechatConfigSvc.createWxMpService(
 				partner.getAppId(), partner.getSecretKey(), partner.getToken());
 		CookieUtils.addCookie(request, response, "_URL", URL, null, null);
-		CookieUtils.addCookie(request, response, "_SESSION_NAME", SESSION_NAME, null, null);
+		CookieUtils.addCookie(request, response, "_SESSION_NAME", SESSION_NAME,
+				null, null);
 		CookieUtils.addCookie(request, response, "_PID", partner.getId() + "",
 				null, null);
 		Map<String, Object> params = new HashMap<String, Object>();

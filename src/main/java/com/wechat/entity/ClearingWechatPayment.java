@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.wechat.entity.base.BaseClearingwWechatPayment;
+import com.wechat.entity.base.BaseClearingWechatPayment;
 
 /**
  * 微信转账清单
@@ -17,17 +17,16 @@ import com.wechat.entity.base.BaseClearingwWechatPayment;
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "externalNo",
 		"type" }) })
-public class ClearingwWechatPayment extends BaseClearingwWechatPayment{
+public class ClearingWechatPayment extends BaseClearingWechatPayment{
 	
-	public ClearingwWechatPayment(){}
+	public ClearingWechatPayment(){}
 
-	public ClearingwWechatPayment(Long userId, Date createTime,
+	public ClearingWechatPayment(Long userId, Date createTime,
 			BigDecimal clearingFee, Date clearingTime, String requestNo,
 			String status, String externalNo, String type, String ip) {
 		super(userId, createTime, clearingFee, clearingTime, requestNo, status,
 				externalNo, type, ip);
 	}
-	
 	
 	public void init() {
 		if (getCreateTime() == null) {
@@ -40,6 +39,10 @@ public class ClearingwWechatPayment extends BaseClearingwWechatPayment{
 	
 	public enum ClearingwWechatPaymentStatus{
 		未支付,已支付
+	}
+	
+	public enum Type{
+		佣金,分账,收货款
 	}
 	
 	private static final long serialVersionUID = -4092008137144914268L;

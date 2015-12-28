@@ -8,13 +8,15 @@ import javax.persistence.Column;
 import com.common.jdbc.VersionEntity;
 
 @javax.persistence.MappedSuperclass
-public class BaseClearingwWechatPayment extends VersionEntity{
+public class BaseClearingWechatPayment extends VersionEntity{
 
 	private static final long serialVersionUID = -23648241372697966L;
 	
-	public BaseClearingwWechatPayment(){}
+	public static final String PRE_USER_ID="userId";
 	
-	public BaseClearingwWechatPayment(Long userId, Date createTime,
+	public BaseClearingWechatPayment(){}
+	
+	public BaseClearingWechatPayment(Long userId, Date createTime,
 			BigDecimal clearingFee, Date clearingTime, String requestNo,String status,
 			String externalNo, String type, String ip) {
 		this.setUserId(userId);

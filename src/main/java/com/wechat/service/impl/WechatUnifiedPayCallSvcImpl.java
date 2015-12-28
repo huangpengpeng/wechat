@@ -96,8 +96,7 @@ public class WechatUnifiedPayCallSvcImpl implements WechatUnifiedPayCallSvc {
 		params.put(Properties.PRE_MCH_APPID, config.getAppId());
 		params.put(Properties.PRE_MCHID, config.getMchId());
 		params.put(Properties.PRE_DEVICE_INFO, config.getDeviceInfo());
-		params.put(Properties.PRE_NONCE_STR,
-				StringUtils.remove(UUID.randomUUID().toString(), "-"));
+		params.put(Properties.PRE_NONCE_STR, partner_trade_no);// 应该转账每次的partner_trade_no必须不一样
 		params.put(Properties.PRE_PARTNER_TRADE_NO, partner_trade_no);
 		params.put(Properties.PRE_OPEN_ID, openid);
 		params.put(Properties.PRE_CHECK_NAME, "NO_CHECK");
