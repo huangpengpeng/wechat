@@ -111,7 +111,6 @@ public class WechatConfigAct {
 			errors.toModel(model);
 		}
 	}
-	
 
 	@RequestMapping(value = "/wechat_config/oauth2-{pId}-{scope}-{SESSION_NAME}.html")
 	public void oauthSubmit(HttpServletRequest request,
@@ -150,7 +149,8 @@ public class WechatConfigAct {
 			throws Exception {
 		WebErrors errors = WebErrors.create(request);
 		errors.ifBlank(code, "CODE", 500);
-		if (session.getAttribute(request, _SESSION_NAME==null?WECHAT_OPEN_ID:_SESSION_NAME) != null) {
+		if (session.getAttribute(request,
+				_SESSION_NAME == null ? WECHAT_OPEN_ID : _SESSION_NAME) != null) {
 			errors.addErrorString("invalid cod");
 		}
 		if (errors.hasErrors()) {
@@ -168,19 +168,22 @@ public class WechatConfigAct {
 				partner.getAppId(), partner.getSecretKey(), partner.getToken());
 		WxMpOAuth2AccessToken wxMpOAuth2AccessToken = null;
 		try {
-			wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
+			if (session.getAttribute(request,
+					_SESSION_NAME == null ? WECHAT_OPEN_ID : _SESSION_NAME) == null) {
+				wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
+			}
 		} catch (WxErrorException e) {
 			log.error("获取微信 TOKEN 失败  code :" + code, e);
 			addErrorCount(request);
 		}
 		if (wxMpOAuth2AccessToken != null) {
-			session.setAttribute(request, null,  _SESSION_NAME==null?WECHAT_OPEN_ID:_SESSION_NAME,
-					wxMpOAuth2AccessToken.getOpenId());
+			session.setAttribute(request, null,
+					_SESSION_NAME == null ? WECHAT_OPEN_ID : _SESSION_NAME,
+					wxMpOAuth2AccessToken);
 		}
 		log.info("redirectURI url:{}", redirectURI.toString());
 		return redirectURI.toString();
 	}
-	
 
 	protected Integer addErrorCount(HttpServletRequest request) {
 		Integer errorCount = (Integer) session.getAttribute(request,
