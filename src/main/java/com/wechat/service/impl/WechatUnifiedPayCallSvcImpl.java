@@ -38,20 +38,6 @@ public class WechatUnifiedPayCallSvcImpl implements WechatUnifiedPayCallSvc {
 			Config config, Long userId, String out_trade_no, String body,
 			BigDecimal total_fee, String spbill_create_ip, String trade_type,
 			String openid) {
-		List<WechatUnifiedPayCall> list = manager.getByExternalNo(out_trade_no);
-		for (WechatUnifiedPayCall unifiedCall : list) {
-			if (unifiedCall.getResponseText() == null) {
-				continue;
-			}
-			ResponseConfig responseConfg = new ResponseConfig(
-					config.getMapFromXML(unifiedCall.getResponseText()),
-					unifiedCall.getResponseText(),
-					unifiedCall.getResponseCode(),
-					unifiedCall.getResponseMsg(), unifiedCall.getRequestNo());
-			if (!responseConfg.hasErrors()) {
-				return responseConfg;
-			}
-		}
 		SortedMap<String, String> params = new TreeMap<String, String>();
 		params.put(Properties.PRE_APP_ID, config.getAppId());
 		params.put(Properties.PRE_MCH_ID, config.getMchId());
@@ -87,11 +73,11 @@ public class WechatUnifiedPayCallSvcImpl implements WechatUnifiedPayCallSvc {
 				responseConfig.getMsg());
 		return responseConfig;
 	}
-	
+
 	@Override
 	public ResponseConfig transferSubmit(Config config, Long userId,
 			String partner_trade_no, String openid, BigDecimal amount,
-			String desc, String spbill_create_ip) {
+			String desc, String check_name,String re_user_name,String spbill_create_ip) {
 		SortedMap<String, String> params = new TreeMap<String, String>();
 		params.put(Properties.PRE_MCH_APPID, config.getAppId());
 		params.put(Properties.PRE_MCHID, config.getMchId());
@@ -99,7 +85,8 @@ public class WechatUnifiedPayCallSvcImpl implements WechatUnifiedPayCallSvc {
 		params.put(Properties.PRE_NONCE_STR, partner_trade_no);// 应该转账每次的partner_trade_no必须不一样
 		params.put(Properties.PRE_PARTNER_TRADE_NO, partner_trade_no);
 		params.put(Properties.PRE_OPEN_ID, openid);
-		params.put(Properties.PRE_CHECK_NAME, "NO_CHECK");
+		params.put(Properties.PRE_CHECK_NAME, check_name);
+		params.put(Properties.PRE_RE_USER_NAME, re_user_name);
 		params.put(Properties.PRE_AMOUNT, amount.toString());
 		params.put(Properties.PRE_DESC, desc);
 		params.put(Properties.PRE_SPBILL_CREATE_IP, spbill_create_ip);
@@ -116,7 +103,7 @@ public class WechatUnifiedPayCallSvcImpl implements WechatUnifiedPayCallSvc {
 				responseConfig.getMsg());
 		return responseConfig;
 	}
-	
+
 	@Override
 	public ResponseConfig queryOrder(Config config, Long userId,
 			String transaction_id, String out_trade_no) {
@@ -146,7 +133,6 @@ public class WechatUnifiedPayCallSvcImpl implements WechatUnifiedPayCallSvc {
 		return responseConfig;
 	}
 
-
 	@Override
 	public ResponseConfig getTransferinfo(Config config, Long userId,
 			String partner_trade_no) {
@@ -163,8 +149,8 @@ public class WechatUnifiedPayCallSvcImpl implements WechatUnifiedPayCallSvc {
 				params.get(Properties.PRE_NONCE_STR), partner_trade_no,
 				JsonUtils.renderJson(params), URL.GET_TRANSFER_INFO_URL);
 		ResponseConfig responseConfig = config.httpRequest(
-				URL.GET_TRANSFER_INFO_URL, params.get(Properties.PRE_NONCE_STR),
-				params);
+				URL.GET_TRANSFER_INFO_URL,
+				params.get(Properties.PRE_NONCE_STR), params);
 		manager.update(unifiedPayCall.getId(),
 				responseConfig.getResponseText(), responseConfig.getCode(),
 				responseConfig.getMsg());
@@ -186,15 +172,14 @@ public class WechatUnifiedPayCallSvcImpl implements WechatUnifiedPayCallSvc {
 				responseConfg.getMsg());
 		return unifiedCall;
 	}
-	
 
 	@Override
 	public void addEvent(WechatUnifiedCallEventListener listener) {
 		caches.add(listener);
 	}
-	
+
 	private List<WechatUnifiedCallEventListener> caches = new ArrayList<WechatUnifiedCallEventListener>();
-	
+
 	@Autowired
 	private WechatUnifiedPayCallMng manager;
 }

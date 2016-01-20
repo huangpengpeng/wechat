@@ -65,7 +65,7 @@ public interface WechatUnifiedPayCallSvc {
 	 */
 	public ResponseConfig transferSubmit(Config config, Long userId,
 			String partner_trade_no, String openid, BigDecimal amount,
-			String desc, String spbill_create_ip);
+			String desc,String check_name,String re_user_name, String spbill_create_ip);
 	
 	/**
 	 * 

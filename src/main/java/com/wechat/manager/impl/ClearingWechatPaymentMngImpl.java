@@ -3,28 +3,32 @@ package com.wechat.manager.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.common.jdbc.page.Pagination;
 import com.wechat.dao.ClearingWechatPaymentDao;
 import com.wechat.entity.ClearingWechatPayment;
 import com.wechat.manager.ClearingWechatPaymentMng;
-@Transactional(isolation=Isolation.REPEATABLE_READ)
+
+@Transactional(isolation = Isolation.REPEATABLE_READ)
 @Service
-public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng{
+public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 
 	@Override
 	public ClearingWechatPayment add(Long userId, BigDecimal clearingFee,
-			String status, String externalNo, String type, String ip) {
+			String status, String externalNo, String type, BigDecimal allFee,
+			BigDecimal remainderFee, BigDecimal freezeFee, String ip) {
 		if (clearingFee == null || clearingFee.compareTo(BigDecimal.ZERO) == 0) {
 			return null;
 		}
 		ClearingWechatPayment clearingWechatPayment = new ClearingWechatPayment(
 				userId, null, clearingFee, null, null, status, externalNo,
-				type, ip);
+				type, allFee, remainderFee, freezeFee, ip);
 		clearingWechatPayment.init();
 		clearingWechatPayment.setId(dao.add(clearingWechatPayment));
 		return clearingWechatPayment;
@@ -46,17 +50,17 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng{
 		clearingWechatPayment.setRequestNo(StringUtils.remove(UUID.randomUUID()
 				.toString(), "-"));
 		dao.clearing(id, clearingWechatPayment.getRequestNo());
-		if (clearingEvent.handleEvent(clearingWechatPayment)) {
+		if (!clearingEvent.handleEvent(clearingWechatPayment)) {
 			throw new IllegalStateException("转账失败");
 		}
 	}
-	
+
 	@Override
-	public Pagination getPage(Date startCreateTime, Date endCreateTime,
-			Integer pageNo) {
-		return dao.getPage(startCreateTime, endCreateTime, pageNo);
+	public Pagination getPage(Long userId, Date startCreateTime,
+			Date endCreateTime, Integer pageNo) {
+		return dao.getPage(userId, startCreateTime, endCreateTime, pageNo);
 	}
-	
+
 	@Autowired
 	private ClearingWechatPaymentDao dao;
 }

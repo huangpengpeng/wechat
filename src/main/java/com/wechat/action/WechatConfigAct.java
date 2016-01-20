@@ -20,13 +20,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.common.util.CryptoDesUtils;
 import com.common.util.JsonUtils;
-import com.common.web.CookieUtils;
+import com.common.util.ParamMap;
+import com.common.util.ParamentersUtils;
 import com.common.web.ResponseUtils;
 import com.common.web.WebErrors;
 import com.common.web.session.SessionProvider;
@@ -126,52 +126,55 @@ public class WechatConfigAct {
 		Partner partner = partnerMng.get(pId);
 		WxMpService wxMpService = wechatConfigSvc.createWxMpService(
 				partner.getAppId(), partner.getSecretKey(), partner.getToken());
-		CookieUtils.addCookie(request, response, "_URL", URL, null, null);
-		CookieUtils.addCookie(request, response, "_SESSION_NAME", SESSION_NAME,
-				null, null);
-		CookieUtils.addCookie(request, response, "_PID", partner.getId() + "",
-				null, null);
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("serviceName", WebUtils.getRealm(request));
-		response.sendRedirect(wxMpService.oauth2buildAuthorizationUrl("http://"
-				+ partner.getRealm() + "/login_wechat.html",
+		ParamMap<String, Object> params = new ParamMap<String, Object>()
+				.add("_URL", URL).add("_SESSION_NAME", SESSION_NAME)
+				.add("_PID", pId);
+		response.sendRedirect(wxMpService.oauth2buildAuthorizationUrl(
+				"http://"
+						+ partner.getRealm()
+						+ "/login_wechat"
+						+ CryptoDesUtils.encrypt(
+								JsonUtils.renderJson(params.getPraamMap()),
+								CryptoDesUtils.PASSWORD_CRYPT_KEY) + ".html",
 				scope == null ? WxConsts.OAUTH2_SCOPE_BASE : scope,
-				CryptoDesUtils.encrypt(JsonUtils.renderJson(params),
+				CryptoDesUtils.encrypt(JsonUtils
+						.renderJson(new ParamMap<String, String>().add(
+								"serviceName", WebUtils.getRealm(request))
+								.getPraamMap()),
 						CryptoDesUtils.PASSWORD_CRYPT_KEY)));
 	}
 
-	@RequestMapping(value = { "/wechat_config/redirectURI.html",
-			"/login_wechat.html" })
+	@RequestMapping(value = { "/login_wechat{params}.html" })
 	public String redirectURI(HttpServletRequest request, ModelMap model,
-			@CookieValue("_PID") Long pId, String code, String state,
-			@CookieValue("_URL") String URI,
-			@CookieValue("_SESSION_NAME") String _SESSION_NAME)
+			String code, @PathVariable("params") String params, String state)
 			throws Exception {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		if (params != null && params.length() > 0) {
+			paramMap = JsonUtils.toMap(CryptoDesUtils.decrypt(params,
+					CryptoDesUtils.PASSWORD_CRYPT_KEY));
+		}
+		Long pId = ((Integer) paramMap.getOrDefault("_PID", 1)).longValue();
+		String URI = (String) paramMap.getOrDefault("_URL", "/");
+		String _SESSION_NAME = (String) paramMap.getOrDefault("_SESSION_NAME",
+				WECHAT_OPEN_ID);
 		WebErrors errors = WebErrors.create(request);
 		errors.ifBlank(code, "CODE", 500);
-		if (session.getAttribute(request,
-				_SESSION_NAME == null ? WECHAT_OPEN_ID : _SESSION_NAME) != null) {
-			errors.addErrorString("invalid cod");
-		}
-		if (errors.hasErrors()) {
-			return errors
-					.showErrorPage(
-							model,
-							"redirect:"
-									+ (StringUtils.isBlank(URI) ? "/common/member/index.html"
-											: URI));
+		WxMpOAuth2AccessToken wxMpOAuth2AccessToken = (WxMpOAuth2AccessToken) session
+				.getAttribute(request, _SESSION_NAME == null ? WECHAT_OPEN_ID
+						: _SESSION_NAME);
+		if ((wxMpOAuth2AccessToken != null || errors.hasErrors())
+				&& ParamentersUtils.getQueryParams(URI, "refresh") == null) {
+			return "redirect:"
+					+ (StringUtils.isBlank(URI) ? "/common/member/index.html"
+							: URI);
 		}
 		StringBuffer redirectURI = new StringBuffer("redirect:");
 		redirectURI.append(URI);
 		Partner partner = partnerMng.get(pId);
 		WxMpService wxMpService = wechatConfigSvc.createWxMpService(
 				partner.getAppId(), partner.getSecretKey(), partner.getToken());
-		WxMpOAuth2AccessToken wxMpOAuth2AccessToken = null;
 		try {
-			if (session.getAttribute(request,
-					_SESSION_NAME == null ? WECHAT_OPEN_ID : _SESSION_NAME) == null) {
-				wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
-			}
+			wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
 		} catch (WxErrorException e) {
 			log.error("获取微信 TOKEN 失败  code :" + code, e);
 			addErrorCount(request);
@@ -179,6 +182,37 @@ public class WechatConfigAct {
 		if (wxMpOAuth2AccessToken != null) {
 			session.setAttribute(request, null,
 					_SESSION_NAME == null ? WECHAT_OPEN_ID : _SESSION_NAME,
+					wxMpOAuth2AccessToken);
+		}
+		log.info("redirectURI url:{}", redirectURI.toString());
+		return redirectURI.toString();
+	}
+
+	@RequestMapping(value = { "/wechat_config/redirectURI.html" })
+	public String redirectURI(HttpServletRequest request, ModelMap model,
+			String code, Long pId, String state) {
+		WebErrors errors = WebErrors.create(request);
+		errors.ifBlank(code, "CODE", 500);
+		WxMpOAuth2AccessToken wxMpOAuth2AccessToken = (WxMpOAuth2AccessToken) session
+				.getAttribute(request, WECHAT_OPEN_ID);
+		if ((wxMpOAuth2AccessToken != null || errors.hasErrors())) {
+			return "redirect:"
+					+ (StringUtils.isBlank(state) ? "/common/member/index.html"
+							: state);
+		}
+		StringBuffer redirectURI = new StringBuffer("redirect:");
+		redirectURI.append(state);
+		Partner partner = partnerMng.get(pId);
+		WxMpService wxMpService = wechatConfigSvc.createWxMpService(
+				partner.getAppId(), partner.getSecretKey(), partner.getToken());
+		try {
+			wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
+		} catch (WxErrorException e) {
+			log.error("redirectURI 获取微信 TOKEN 失败  code :" + code, e);
+			addErrorCount(request);
+		}
+		if (wxMpOAuth2AccessToken != null) {
+			session.setAttribute(request, null, WECHAT_OPEN_ID,
 					wxMpOAuth2AccessToken);
 		}
 		log.info("redirectURI url:{}", redirectURI.toString());

@@ -8,7 +8,7 @@ public interface WechatWalletMng {
 	
 	WechatWallet get(Long id);
 	
-	void update(Long id ,String username, String wechatPayNo);
+	WechatWallet update(Long id ,String username, String wechatPayNo);
 	
 	WechatWallet getByexternalNo(String externalNo);
 }

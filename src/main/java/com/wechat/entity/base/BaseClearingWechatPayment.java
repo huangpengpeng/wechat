@@ -17,8 +17,9 @@ public class BaseClearingWechatPayment extends VersionEntity{
 	public BaseClearingWechatPayment(){}
 	
 	public BaseClearingWechatPayment(Long userId, Date createTime,
-			BigDecimal clearingFee, Date clearingTime, String requestNo,String status,
-			String externalNo, String type, String ip) {
+			BigDecimal clearingFee, Date clearingTime, String requestNo,
+			String status, String externalNo, String type, BigDecimal allFee,
+			BigDecimal remainderFee, BigDecimal freezeFee, String ip) {
 		this.setUserId(userId);
 		this.setCreateTime(createTime);
 		this.setClearingFee(clearingFee);
@@ -28,6 +29,9 @@ public class BaseClearingWechatPayment extends VersionEntity{
 		this.setExternalNo(externalNo);
 		this.setType(type);
 		this.setIp(ip);
+		this.setAllFee(allFee);
+		this.setRemainderFee(remainderFee);
+		this.setFreezeFee(freezeFee);
 	}
 
 	/**
@@ -71,6 +75,24 @@ public class BaseClearingWechatPayment extends VersionEntity{
 	 * 转账类型（分账|订单推广）
 	 */
 	private String type;
+	
+	/**
+	 * 账户总余额
+	 */
+	@Column(precision = 18, scale = 2)
+	private BigDecimal allFee;
+	
+	/**
+	 * 账户余额
+	 */
+	@Column(precision = 18, scale = 2)
+	private BigDecimal remainderFee;
+	
+	/**
+	 * 账户冻结金额
+	 */
+	@Column(precision = 18, scale = 2)
+	private BigDecimal freezeFee;
 	
 	/**
 	 * 转账IP
@@ -148,5 +170,29 @@ public class BaseClearingWechatPayment extends VersionEntity{
 
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+
+	public BigDecimal getAllFee() {
+		return allFee;
+	}
+
+	public void setAllFee(BigDecimal allFee) {
+		this.allFee = allFee;
+	}
+
+	public BigDecimal getRemainderFee() {
+		return remainderFee;
+	}
+
+	public void setRemainderFee(BigDecimal remainderFee) {
+		this.remainderFee = remainderFee;
+	}
+
+	public BigDecimal getFreezeFee() {
+		return freezeFee;
+	}
+
+	public void setFreezeFee(BigDecimal freezeFee) {
+		this.freezeFee = freezeFee;
 	}
 }

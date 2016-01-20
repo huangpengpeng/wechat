@@ -1,5 +1,7 @@
 package com.wechat.dao;
 
+import java.util.List;
+
 import com.wechat.entity.WechatUser;
 
 public interface WechatUserDao {
@@ -11,4 +13,8 @@ public interface WechatUserDao {
 	void update(Long id, Long externalNo);
 	
 	public void removeBinding(Long id) ;
+	
+	List<WechatUser> getByExternalNo(Long externalNo);
+	
+	public void delete(Long id) ;
 }

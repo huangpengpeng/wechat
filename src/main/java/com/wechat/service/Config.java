@@ -1,6 +1,5 @@
 package com.wechat.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -20,14 +19,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
 import org.xml.sax.SAXException;
 
-import com.common.bean.NewInstance;
 import com.common.util.CollectionUtils;
 import com.tencent.common.Configure;
-import com.tencent.common.Signature;
 
 public class Config {
 

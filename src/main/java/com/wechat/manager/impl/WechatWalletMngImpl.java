@@ -27,8 +27,9 @@ public class WechatWalletMngImpl implements WechatWalletMng{
 	}
 
 	@Override
-	public void update(Long id, String username, String wechatPayNo) {
+	public WechatWallet update(Long id, String username, String wechatPayNo) {
 		dao.update(id, username, wechatPayNo);
+		return dao.get(id);
 	}
 
 	@Override

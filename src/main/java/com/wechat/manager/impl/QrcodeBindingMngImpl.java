@@ -83,8 +83,10 @@ public class QrcodeBindingMngImpl implements QrcodeBindingMng, InitializingBean 
 						WechatUser wechatUser = wechatUserMng.getByOpenId(
 								partner.getId(), fromUserName);
 						if (wechatUser == null) {
-							wechatUser = wechatUserMng.add(partner.getId(),
-									null, fromUserName);
+							wechatUser = (WechatUser) wechatUserMng.register(
+									partner.getId(), null, fromUserName,
+									Long.valueOf(qrcode.getSign())).get(
+									"WECHAT_USER");
 						}
 						QrcodeBinding qrcodeBinding = dao.getByQrcode(
 								partner.getId(), wechatUser.getId());

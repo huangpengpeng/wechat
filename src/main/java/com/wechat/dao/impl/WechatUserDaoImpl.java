@@ -1,5 +1,7 @@
 package com.wechat.dao.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.common.jdbc.JdbcTemplateBaseDao;
@@ -45,5 +47,19 @@ public class WechatUserDaoImpl extends JdbcTemplateBaseDao implements WechatUser
 				"update WechatUser set gmtModify=current_timestamp()");
 		sqlBuilder.set("externalNo", null);
 		super.update(id, sqlBuilder);
+	}
+
+	@Override
+	public List<WechatUser> getByExternalNo(Long externalNo) {
+		SqlBuilder sqlBuilder=new SqlBuilder("select * from WechatUser where 1=1");
+		if(sqlBuilder.ifNotNull(externalNo)){
+			sqlBuilder.andEqualTo("externalNo", externalNo);
+		}
+		return query(sqlBuilder);
+	}
+
+	@Override
+	public void delete(Long id) {
+		super.delete(id);
 	}
 }

@@ -22,13 +22,11 @@ public class BaseWechatWallet extends VersionEntity{
 	/**
 	 * 微信账户昵称
 	 */
-	@Column(unique=true)
 	private String username;
 	
 	/**
 	 * OPENID
 	 */
-	@Column(unique=true)
 	private String wechatPayNo;
 	
 	/**

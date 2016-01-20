@@ -13,7 +13,7 @@ public interface ClearingWechatPaymentDao {
 	
 	ClearingWechatPayment getByExternalNo(String type ,String externalNo);
 	
-	Pagination getPage(Date startCreateTime, Date endCreateTime,
+	Pagination getPage(Long userId,Date startCreateTime, Date endCreateTime,
 			Integer pageNo);
 	
 	void clearing(Long id,String requestNo );

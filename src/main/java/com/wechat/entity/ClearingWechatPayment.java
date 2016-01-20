@@ -23,9 +23,10 @@ public class ClearingWechatPayment extends BaseClearingWechatPayment{
 
 	public ClearingWechatPayment(Long userId, Date createTime,
 			BigDecimal clearingFee, Date clearingTime, String requestNo,
-			String status, String externalNo, String type, String ip) {
+			String status, String externalNo, String type, BigDecimal allFee,
+			BigDecimal remainderFee, BigDecimal freezeFee, String ip) {
 		super(userId, createTime, clearingFee, clearingTime, requestNo, status,
-				externalNo, type, ip);
+				externalNo, type, allFee, remainderFee, freezeFee, ip);
 	}
 	
 	public void init() {

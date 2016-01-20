@@ -52,7 +52,7 @@ public class ClearingWechatPaymentDaoImpl extends JdbcTemplateBaseDao implements
 	}
 
 	@Override
-	public Pagination getPage(Date startCreateTime, Date endCreateTime,
+	public Pagination getPage(Long userId,Date startCreateTime, Date endCreateTime,
 			Integer pageNo) {
 		SqlBuilder sqlBuilder = new SqlBuilder(
 				"select * from ClearingWechatPayment where 1=1");
@@ -61,6 +61,9 @@ public class ClearingWechatPaymentDaoImpl extends JdbcTemplateBaseDao implements
 		}
 		if (sqlBuilder.ifNotNull(endCreateTime)) {
 			sqlBuilder.andLessThanOrEqualTo("createTime", endCreateTime);
+		}
+		if (sqlBuilder.ifNotNull(userId)) {
+			sqlBuilder.andEqualTo("userId", userId);
 		}
 		return super.getPage(sqlBuilder, pageNo == null ? 1 : pageNo, 10);
 	}

@@ -72,6 +72,7 @@ public class BaseWechatUnifiedPayCall extends BaseEntity{
 	/**
 	 * 请求响应消息
 	 */
+	@Lob
 	private String responseMsg;
 	
 	/**
