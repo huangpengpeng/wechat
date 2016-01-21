@@ -32,7 +32,64 @@ import com.wechat.service.WechatUnifiedPayCallSvc;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 @Service
 public class WechatUnifiedPayCallSvcImpl implements WechatUnifiedPayCallSvc {
-
+	@Override
+	public ResponseConfig sendRedpackSubmit(HttpServletRequest request,
+			Config config, Long userId, String out_trade_no,
+			String activityName, BigDecimal total_fee, String spbill_create_ip,
+			String remark, String openid, String sendName,String wishing) {
+		List<WechatUnifiedPayCall> list = manager.getByExternalNo(out_trade_no);
+		
+		//防止重复发放
+		for (WechatUnifiedPayCall unifiedCall : list) {
+			if (unifiedCall.getResponseText() == null) {
+				continue;
+			}
+			ResponseConfig responseConfg = new ResponseConfig(
+					config.getMapFromXML(unifiedCall.getResponseText()),
+					unifiedCall.getResponseText(),
+					unifiedCall.getResponseCode(),
+					unifiedCall.getResponseMsg(), unifiedCall.getRequestNo());
+			if (!responseConfg.hasErrors()) {
+				return responseConfg;
+			}
+		}
+		SortedMap<String, String> params = new TreeMap<String, String>();
+		params.put(Properties.PRE_WXAPP_ID, config.getAppId());
+		params.put(Properties.PRE_MCH_ID, config.getMchId());
+		params.put(Properties.PRE_DEVICE_INFO, config.getDeviceInfo());
+		params.put(Properties.PRE_NONCE_STR,
+				StringUtils.remove(UUID.randomUUID().toString(), "-"));
+		params.put(Properties.PRE_REMARK, remark);
+		params.put(Properties.PRE_SEND_NAME, sendName);
+		params.put(Properties.PRE_MCH_BILLNO, out_trade_no);
+		params.put(Properties.PRE_TOTAL_AMOUNT, total_fee.toString());
+		params.put(Properties.PRE_TOTAL_NUM, "1");
+		params.put(Properties.PRE_WISHING, wishing);
+		params.put(Properties.PRE_ACT_NAME, activityName);
+		params.put(Properties.PRE_SPBILL_CREATE_IP, spbill_create_ip);
+		params.put(Properties.PRE_TIME_START, DateTimeUtils.format(new Date(),
+				DateTimeUtils.DEFAULT_DATE_TIME_FORMAT_PATTERN2));
+		params.put(Properties.PRE_TIME_EXPIRE, DateTimeUtils.format(
+				DateTimeUtils.addYears(new Date(), 1),
+				DateTimeUtils.DEFAULT_DATE_TIME_FORMAT_PATTERN2));
+		params.put(Properties.PRE_NOTIFY_URL,
+				WebUtils.getRealmURL(request, URL.NOTIFY_URL));
+		params.put(Properties.PRE_REOPEN_ID, openid);
+		String sign = WxCryptUtil.createSign(params, config.getSignKey());
+		params.put(Properties.PRE_SIGN, sign);
+		WechatUnifiedPayCall unifiedPayCall = manager.add(userId,
+				config.getAppId(), config.getMchId(),
+				params.get(Properties.PRE_NONCE_STR), out_trade_no,
+				JsonUtils.renderJson(params), URL.UNIFIED_ORDER_URL);
+		ResponseConfig responseConfig = config.httpRequest(
+				URL.UNIFIED_ORDER_URL, params.get(Properties.PRE_NONCE_STR),
+				params);
+		manager.update(unifiedPayCall.getId(),
+				responseConfig.getResponseText(), responseConfig.getCode(),
+				responseConfig.getMsg());
+		return responseConfig;
+	}
+	
 	@Override
 	public ResponseConfig paymentSubmit(HttpServletRequest request,
 			Config config, Long userId, String out_trade_no, String body,
