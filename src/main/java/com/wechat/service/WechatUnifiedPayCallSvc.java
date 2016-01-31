@@ -9,7 +9,35 @@ import com.wechat.service.Config.ResponseConfig;
 
 
 public interface WechatUnifiedPayCallSvc {
-
+	/**
+	 * 微信红包接口
+	 * 
+	 * @param request
+	 * @param config
+	 * @param userId
+	 *            当前用户编号
+	 * @param out_trade_no
+	 *            支付订单编号
+	 * @param activityName
+	 *            活动名称
+	 * @param total_fee
+	 *            支付金额 元
+	 * @param spbill_create_ip
+	 *            支付这IP
+	 * @param memo
+	 *            备注
+	 * @param openid
+	 *            支付者OPENID
+	 * @param wishing
+	 *            红包祝福语
+	 * @param 商户名称
+	 * @return
+	 */
+	public ResponseConfig sendRedpackSubmit(HttpServletRequest request,
+			Config config, Long userId, String out_trade_no,
+			String activityName, BigDecimal total_fee, String spbill_create_ip,
+			String remark, String openid, String sendName, String wishing);
+	
 	/**
 	 * 微信支付接口
 	 * 
