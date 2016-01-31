@@ -227,6 +227,10 @@ public class Config {
 		 */
 		public static String PRE_APP_ID = "appid";
 		/**
+		 * 微信分配的公众账号ID（企业号corpid即为此appId）
+		 */
+		public static String PRE_WXAPP_ID = "wxappid";
+		/**
 		 * 微信支付分配的商户号
 		 */
 		public static String PRE_MCH_ID = "mch_id";
@@ -259,6 +263,14 @@ public class Config {
 		 */
 		public static String PRE_OUT_TRADE_NO = "out_trade_no";
 		/**
+		 * 商户订单号
+		 */
+		public static String PRE_MCH_BILLNO = "mch_billno";
+		/**
+		 * 商户名称
+		 */
+		public static String PRE_SEND_NAME = "send_name";
+		/**
 		 * 符合ISO 4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型
 		 */
 		public static String PRE_FEE_TYPE = "fee_type";
@@ -267,9 +279,30 @@ public class Config {
 		 */
 		public static String PRE_TOTAL_FEE = "total_fee";
 		/**
+		 * 红包总金额，单位为分，详见支付金额
+		 */
+		public static String PRE_TOTAL_AMOUNT = "total_amount";
+		/**
+		 * 红包总发放人数
+		 */
+		public static String PRE_TOTAL_NUM = "total_num";
+		/**
+		 * 红包祝福语
+		 */
+		public static String PRE_WISHING = "wishing";
+		/**
+		 * 红包活动名称
+		 */
+		public static String PRE_ACT_NAME = "act_name";
+		/**
 		 * APP和网页支付提交用户端ip，Native支付填调用微信支付API的机器IP。
 		 */
 		public static String PRE_SPBILL_CREATE_IP = "spbill_create_ip";
+		
+		/**
+		 * APP和网页支付提交用户端ip，Native支付填调用微信支付API的机器IP。
+		 */
+		public static String PRE_CREATE_IP = "client_ip";
 		/**
 		 * 订单生成时间，格式为yyyyMMddHHmmss，如2009年12月25日9点10分10秒表示为20091225091010。
 		 * 其他详见时间规则
@@ -305,6 +338,11 @@ public class Config {
 		 * 企业号请使用【企业号OAuth2.0接口】获取企业号内成员userid，再调用【企业号userid转openid接口】进行转换
 		 */
 		public static String PRE_OPEN_ID = "openid";
+		/**
+		 * trade_type=JSAPI，此参数必传，用户在商户appid下的唯一标识。openid如何获取，可参考【获取openid】。
+		 * 企业号请使用【企业号OAuth2.0接口】获取企业号内成员userid，再调用【企业号userid转openid接口】进行转换
+		 */
+		public static String PRE_REOPEN_ID = "re_openid";
 		/**
 		 * 微信订单号
 		 */
@@ -346,6 +384,10 @@ public class Config {
 		 * 微信支付分配的商户号
 		 */
 		public static String PRE_MCHID = "mchid";
+		/**
+		 * 备注
+		 */
+		public static String PRE_REMARK = "remark";
 	}
 
 	/**
@@ -360,6 +402,7 @@ public class Config {
 		public static String TRANSFERS_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers";// 查询订单
 		public static String GET_TRANSFER_INFO_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo";// 查询订单
 		public static String NOTIFY_URL = "/common/wechat_config/c.jhtml"; // 系统回调
+		public static String SENDREDPACK_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack";//红包
 	}
 
 	public static Map<String, String> errorCodeMsg = new HashMap<String, String>() {
