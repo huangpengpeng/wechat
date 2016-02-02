@@ -33,7 +33,7 @@ public interface WechatUnifiedPayCallSvc {
 	 * @param 商户名称
 	 * @return
 	 */
-	public ResponseConfig sendRedpackSubmit(HttpServletRequest request,
+	public ResponseConfig redpackSubmit(HttpServletRequest request,
 			Config config, Long userId, String out_trade_no,
 			String activityName, BigDecimal total_fee, String spbill_create_ip,
 			String remark, String openid, String sendName, String wishing);

@@ -33,12 +33,11 @@ import com.wechat.service.WechatUnifiedPayCallSvc;
 @Service
 public class WechatUnifiedPayCallSvcImpl implements WechatUnifiedPayCallSvc {
 	@Override
-	public ResponseConfig sendRedpackSubmit(HttpServletRequest request,
+	public ResponseConfig redpackSubmit(HttpServletRequest request,
 			Config config, Long userId, String out_trade_no,
 			String activityName, BigDecimal total_fee, String spbill_create_ip,
 			String remark, String openid, String sendName, String wishing) {
 		List<WechatUnifiedPayCall> list = manager.getByExternalNo(out_trade_no);
-
 		// 防止重复发放
 		for (WechatUnifiedPayCall unifiedCall : list) {
 			if (unifiedCall.getResponseText() == null) {
