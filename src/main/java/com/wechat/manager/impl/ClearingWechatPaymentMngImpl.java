@@ -56,11 +56,20 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 	}
 
 	@Override
-	public Pagination getPage(Long userId, Date startCreateTime,
+	public Pagination getPage(Long userId,String status, Date startCreateTime,
 			Date endCreateTime, Integer pageNo) {
-		return dao.getPage(userId, startCreateTime, endCreateTime, pageNo);
+		return dao.getPage(userId, status,startCreateTime, endCreateTime, pageNo);
 	}
 
+	@Override
+	public void repair(Long id, BigDecimal clearingFee, ClearingEvent clearingEvent) {
+		ClearingWechatPayment clearingWechatPayment = dao.get(id);
+		dao.repair(id, clearingFee);
+		if (!clearingEvent.handleEvent(clearingWechatPayment)) {
+			throw new IllegalStateException("修复失败");
+		}
+	}
+	
 	@Autowired
 	private ClearingWechatPaymentDao dao;
 }

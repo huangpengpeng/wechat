@@ -7,14 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import me.chanjar.weixin.common.api.WxConsts;
-import me.chanjar.weixin.common.bean.WxJsapiSignature;
-import me.chanjar.weixin.common.exception.WxErrorException;
-import me.chanjar.weixin.common.util.StringUtils;
-import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
-import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +26,14 @@ import com.common.web.util.WebUtils;
 import com.wechat.entity.Partner;
 import com.wechat.manager.PartnerMng;
 import com.wechat.plugins.WechatConfigSvc;
+
+import me.chanjar.weixin.common.api.WxConsts;
+import me.chanjar.weixin.common.bean.WxJsapiSignature;
+import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.util.StringUtils;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 
 @Controller
 public class WechatConfigAct {
@@ -145,43 +145,37 @@ public class WechatConfigAct {
 	}
 
 	@RequestMapping(value = { "/login_wechat{params}.html" })
-	public String redirectURI(HttpServletRequest request, ModelMap model,
-			String code, @PathVariable("params") String params, String state)
-			throws Exception {
+	public String redirectURI(HttpServletRequest request, ModelMap model, String code,
+			@PathVariable("params") String params, String state) throws Exception {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		if (params != null && params.length() > 0) {
-			paramMap = JsonUtils.toMap(CryptoDesUtils.decrypt(params,
-					CryptoDesUtils.PASSWORD_CRYPT_KEY));
+			paramMap = JsonUtils.toMap(CryptoDesUtils.decrypt(params, CryptoDesUtils.PASSWORD_CRYPT_KEY));
 		}
 		Long pId = ((Integer) paramMap.getOrDefault("_PID", 1)).longValue();
 		String URI = (String) paramMap.getOrDefault("_URL", "/");
-		String _SESSION_NAME = (String) paramMap.getOrDefault("_SESSION_NAME",
-				WECHAT_OPEN_ID);
+		String _SESSION_NAME = (String) paramMap.getOrDefault("_SESSION_NAME", WECHAT_OPEN_ID);
 		WebErrors errors = WebErrors.create(request);
 		errors.ifBlank(code, "CODE", 500);
-		WxMpOAuth2AccessToken wxMpOAuth2AccessToken = (WxMpOAuth2AccessToken) session
-				.getAttribute(request, _SESSION_NAME == null ? WECHAT_OPEN_ID
-						: _SESSION_NAME);
+		WxMpOAuth2AccessToken wxMpOAuth2AccessToken = (WxMpOAuth2AccessToken) session.getAttribute(request,
+				_SESSION_NAME == null ? WECHAT_OPEN_ID : _SESSION_NAME);
 		if ((wxMpOAuth2AccessToken != null || errors.hasErrors())
 				&& ParamentersUtils.getQueryParams(URI, "refresh") == null) {
-			return "redirect:"
-					+ (StringUtils.isBlank(URI) ? "/common/member/index.html"
-							: URI);
+			return "redirect:" + (StringUtils.isBlank(URI) ? "/member/index.html" : URI);
 		}
 		StringBuffer redirectURI = new StringBuffer("redirect:");
 		redirectURI.append(URI);
 		Partner partner = partnerMng.get(pId);
-		WxMpService wxMpService = wechatConfigSvc.createWxMpService(
-				partner.getAppId(), partner.getSecretKey(), partner.getToken());
+		WxMpService wxMpService = wechatConfigSvc.createWxMpService(partner.getAppId(), partner.getSecretKey(),
+				partner.getToken());
 		try {
+			log.info("根据CODE{} 获取 oauth2getAccessToken refererURL {}", code, WebUtils.getRefererURL());
 			wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
 		} catch (WxErrorException e) {
-			log.error("获取微信 TOKEN 失败  code :" + code, e);
+			log.error("获取微信 TOKEN 失败  code : " + code + " refererURL:" + WebUtils.getRefererURL(), e);
 			addErrorCount(request);
 		}
 		if (wxMpOAuth2AccessToken != null) {
-			session.setAttribute(request, null,
-					_SESSION_NAME == null ? WECHAT_OPEN_ID : _SESSION_NAME,
+			session.setAttribute(request, null, _SESSION_NAME == null ? WECHAT_OPEN_ID : _SESSION_NAME,
 					wxMpOAuth2AccessToken);
 		}
 		log.info("redirectURI url:{}", redirectURI.toString());
@@ -197,7 +191,7 @@ public class WechatConfigAct {
 				.getAttribute(request, WECHAT_OPEN_ID);
 		if ((wxMpOAuth2AccessToken != null || errors.hasErrors())) {
 			return "redirect:"
-					+ (StringUtils.isBlank(state) ? "/common/member/index.html"
+					+ (StringUtils.isBlank(state) ? "/member/index.html"
 							: state);
 		}
 		StringBuffer redirectURI = new StringBuffer("redirect:");

@@ -1,5 +1,6 @@
 package com.wechat.dao;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.common.jdbc.page.Pagination;
@@ -13,8 +14,10 @@ public interface ClearingWechatPaymentDao {
 	
 	ClearingWechatPayment getByExternalNo(String type ,String externalNo);
 	
-	Pagination getPage(Long userId,Date startCreateTime, Date endCreateTime,
+	Pagination getPage(Long userId,String status,Date startCreateTime, Date endCreateTime,
 			Integer pageNo);
 	
-	void clearing(Long id,String requestNo );
+	void clearing(Long id,String requestNo);
+	
+	void repair(Long id ,BigDecimal clearingFee);
 }

@@ -1,5 +1,6 @@
 package com.wechat.dao.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.springframework.stereotype.Repository;
@@ -52,7 +53,7 @@ public class ClearingWechatPaymentDaoImpl extends JdbcTemplateBaseDao implements
 	}
 
 	@Override
-	public Pagination getPage(Long userId,Date startCreateTime, Date endCreateTime,
+	public Pagination getPage(Long userId,String status,Date startCreateTime, Date endCreateTime,
 			Integer pageNo) {
 		SqlBuilder sqlBuilder = new SqlBuilder(
 				"select * from ClearingWechatPayment where 1=1");
@@ -65,6 +66,17 @@ public class ClearingWechatPaymentDaoImpl extends JdbcTemplateBaseDao implements
 		if (sqlBuilder.ifNotNull(userId)) {
 			sqlBuilder.andEqualTo("userId", userId);
 		}
+		if (sqlBuilder.ifNotNull(status)) {
+			sqlBuilder.andEqualTo("status", status);
+		}
 		return super.getPage(sqlBuilder, pageNo == null ? 1 : pageNo, 10);
+	}
+
+	@Override
+	public void repair(Long id, BigDecimal clearingFee) {
+		SqlBuilder sqlBuilder = new SqlBuilder(
+				"update ClearingWechatPayment set gmtModify=current_timestamp() ");
+		sqlBuilder.set("clearingFee", clearingFee);
+		super.update(id, sqlBuilder);
 	}
 }

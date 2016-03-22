@@ -4,41 +4,38 @@ import java.util.Date;
 
 import javax.persistence.Column;
 
+import com.common.jdbc.Comment;
 import com.common.jdbc.VersionEntity;
 
 @javax.persistence.MappedSuperclass
-public class BaseWechatWallet extends VersionEntity{
+public class BaseWechatWallet extends VersionEntity {
 
 	private static final long serialVersionUID = 5975117540571016471L;
 
-	public BaseWechatWallet(){}
-	
-	public BaseWechatWallet(String username,String wechatPayNo,String externalNo){
+	public BaseWechatWallet() {
+	}
+
+	public BaseWechatWallet(String username, String wechatPayNo, String externalNo) {
 		this.setUsername(username);
 		this.setWechatPayNo(wechatPayNo);
 		this.setExternalNo(externalNo);
 	}
-	
-	/**
-	 * 微信账户昵称
-	 */
+
+	@Comment(value = { "微信账户昵称" })
 	private String username;
-	
-	/**
-	 * OPENID
-	 */
+
+	@Comment(value = { "OPENID" })
 	private String wechatPayNo;
-	
-	/**
-	 * 创建时间
-	 */
+
+	@Comment(value = { "创建时间" })
 	private Date createTime;
-	
-	/**
-	 * 外部系统编号
-	 */
-	@Column(unique=true)
+
+	@Comment(value = { "外部系统编号" })
+	@Column(unique = true)
 	private String externalNo;
+
+	@Comment(value = { "是否认证" }, memo = "值为空表示没有认证： false：表示认证失败  true：表示认证成功")
+	private Boolean identificationFlag;
 
 	public String getUsername() {
 		return username;
