@@ -20,15 +20,13 @@ import com.wechat.manager.ClearingWechatPaymentMng;
 public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 
 	@Override
-	public ClearingWechatPayment add(Long userId, BigDecimal clearingFee,
-			String status, String externalNo, String type, BigDecimal allFee,
-			BigDecimal remainderFee, BigDecimal freezeFee, String ip) {
+	public ClearingWechatPayment add(Long userId, BigDecimal clearingFee, String status, String externalNo, String type,
+			BigDecimal allFee, BigDecimal remainderFee, BigDecimal freezeFee, String ip) {
 		if (clearingFee == null || clearingFee.compareTo(BigDecimal.ZERO) == 0) {
 			return null;
 		}
-		ClearingWechatPayment clearingWechatPayment = new ClearingWechatPayment(
-				userId, null, clearingFee, null, null, status, externalNo,
-				type, allFee, remainderFee, freezeFee, ip);
+		ClearingWechatPayment clearingWechatPayment = new ClearingWechatPayment(userId, null, clearingFee, null, null,
+				status, externalNo, type, allFee, remainderFee, freezeFee, ip);
 		clearingWechatPayment.init();
 		clearingWechatPayment.setId(dao.add(clearingWechatPayment));
 		return clearingWechatPayment;
@@ -47,8 +45,7 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 	@Override
 	public void clearing(Long id, ClearingEvent clearingEvent) {
 		ClearingWechatPayment clearingWechatPayment = dao.get(id);
-		clearingWechatPayment.setRequestNo(StringUtils.remove(UUID.randomUUID()
-				.toString(), "-"));
+		clearingWechatPayment.setRequestNo(StringUtils.remove(UUID.randomUUID().toString(), "-"));
 		dao.clearing(id, clearingWechatPayment.getRequestNo());
 		if (!clearingEvent.handleEvent(clearingWechatPayment)) {
 			throw new IllegalStateException("转账失败");
@@ -56,9 +53,8 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 	}
 
 	@Override
-	public Pagination getPage(Long userId,String status, Date startCreateTime,
-			Date endCreateTime, Integer pageNo) {
-		return dao.getPage(userId, status,startCreateTime, endCreateTime, pageNo);
+	public Pagination getPage(Long userId, String status, Date startCreateTime, Date endCreateTime, Integer pageNo) {
+		return dao.getPage(userId, status, startCreateTime, endCreateTime, pageNo);
 	}
 
 	@Override
@@ -69,7 +65,15 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 			throw new IllegalStateException("修复失败");
 		}
 	}
-	
+
+	@Override
+	public void transactionalClearing(TransactionalClearing transactionalClearing) {
+		if (!transactionalClearing.handleEvent()) {
+			throw new IllegalStateException("操作失败");
+		}
+	}
+
 	@Autowired
 	private ClearingWechatPaymentDao dao;
+
 }

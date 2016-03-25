@@ -22,7 +22,13 @@ public interface ClearingWechatPaymentMng {
 	
 	Pagination getPage(Long userId,String status,Date startCreateTime, Date endCreateTime, Integer pageNo);
 	
+	void transactionalClearing(TransactionalClearing transactionalClearing);
+	
 	public static interface ClearingEvent{
 		public boolean handleEvent(ClearingWechatPayment clearingWechatPayment);
+	}
+	
+	public static interface TransactionalClearing{
+		public boolean handleEvent();
 	}
 }
