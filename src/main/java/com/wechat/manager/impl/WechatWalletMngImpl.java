@@ -3,6 +3,7 @@ package com.wechat.manager.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wechat.dao.WechatWalletDao;
@@ -29,12 +30,19 @@ public class WechatWalletMngImpl implements WechatWalletMng{
 	@Override
 	public WechatWallet update(Long id, String username, String wechatPayNo) {
 		dao.update(id, username, wechatPayNo);
+		setIdentificationFlag(id, null);
 		return dao.get(id);
 	}
 
 	@Override
 	public WechatWallet getByexternalNo(String externalNo) {
 		return dao.getByexternalNo(externalNo);
+	}
+
+	@Override
+	public void setIdentificationFlag(Long id,
+			Boolean identificationFlag) {
+		dao.setIdentificationFlag(id, identificationFlag);
 	}
 
 	@Autowired

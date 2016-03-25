@@ -46,4 +46,16 @@ public class WechatWalletDaoImpl extends JdbcTemplateBaseDao implements WechatWa
 		}
 		return super.queryForObject(sqlBuilder);
 	}
+
+	@Override
+	public void setIdentificationFlag(Long id, Boolean identificationFlag) {
+		SqlBuilder sqlBuilder = new SqlBuilder(
+				"update WechatWallet set gmtModify=current_timestamp()");
+		if (sqlBuilder.ifNotNull(identificationFlag)) {
+			sqlBuilder.set("identificationFlag", identificationFlag);
+		} else {
+			sqlBuilder.append(" , identificationFlag = null");
+		}
+		super.update(id, sqlBuilder);
+	}
 }

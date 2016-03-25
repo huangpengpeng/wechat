@@ -68,4 +68,12 @@ public class BaseWechatWallet extends VersionEntity {
 	public void setExternalNo(String externalNo) {
 		this.externalNo = externalNo;
 	}
+
+	public Boolean getIdentificationFlag() {
+		return identificationFlag;
+	}
+
+	public void setIdentificationFlag(Boolean identificationFlag) {
+		this.identificationFlag = identificationFlag;
+	}
 }
