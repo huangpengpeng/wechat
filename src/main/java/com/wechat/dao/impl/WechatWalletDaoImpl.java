@@ -21,7 +21,7 @@ public class WechatWalletDaoImpl extends JdbcTemplateBaseDao implements WechatWa
 	}
 
 	@Override
-	public void update(Long id, String username, String wechatPayNo) {
+	public void update(Long id, String username, String wechatPayNo,Boolean identificationFlag) {
 		SqlBuilder sqlBuilder = new SqlBuilder(
 				"update WechatWallet set gmtModify=current_timestamp()");
 		if (sqlBuilder.ifNotNull(username)) {
@@ -30,6 +30,9 @@ public class WechatWalletDaoImpl extends JdbcTemplateBaseDao implements WechatWa
 		if (sqlBuilder.ifNotNull(wechatPayNo)) {
 			sqlBuilder.set("wechatPayNo", wechatPayNo);
 		}		
+		if (sqlBuilder.ifNotNull(identificationFlag)) {
+			sqlBuilder.set("identificationFlag", identificationFlag);
+		}	
 		super.update(id, sqlBuilder);
 	}
 
@@ -40,22 +43,10 @@ public class WechatWalletDaoImpl extends JdbcTemplateBaseDao implements WechatWa
 
 	@Override
 	public WechatWallet getByexternalNo(String externalNo) {
-		SqlBuilder sqlBuilder=new SqlBuilder("select * from WechatWallet where 1=1");
-		if(sqlBuilder.ifNotNull(externalNo)){
+		SqlBuilder sqlBuilder = new SqlBuilder("select * from WechatWallet where 1=1");
+		if (sqlBuilder.ifNotNull(externalNo)) {
 			sqlBuilder.andEqualTo("externalNo", externalNo);
 		}
 		return super.queryForObject(sqlBuilder);
-	}
-
-	@Override
-	public void setIdentificationFlag(Long id, Boolean identificationFlag) {
-		SqlBuilder sqlBuilder = new SqlBuilder(
-				"update WechatWallet set gmtModify=current_timestamp()");
-		if (sqlBuilder.ifNotNull(identificationFlag)) {
-			sqlBuilder.set("identificationFlag", identificationFlag);
-		} else {
-			sqlBuilder.append(" , identificationFlag = null");
-		}
-		super.update(id, sqlBuilder);
 	}
 }

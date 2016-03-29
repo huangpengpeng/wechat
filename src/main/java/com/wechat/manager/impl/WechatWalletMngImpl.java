@@ -28,9 +28,8 @@ public class WechatWalletMngImpl implements WechatWalletMng{
 	}
 
 	@Override
-	public WechatWallet update(Long id, String username, String wechatPayNo) {
-		dao.update(id, username, wechatPayNo);
-		setIdentificationFlag(id, null);
+	public WechatWallet update(Long id, String username, String wechatPayNo,Boolean identificationFlag) {
+		dao.update(id, username, wechatPayNo,identificationFlag);
 		return dao.get(id);
 	}
 
@@ -39,11 +38,6 @@ public class WechatWalletMngImpl implements WechatWalletMng{
 		return dao.getByexternalNo(externalNo);
 	}
 
-	@Override
-	public void setIdentificationFlag(Long id,
-			Boolean identificationFlag) {
-		dao.setIdentificationFlag(id, identificationFlag);
-	}
 
 	@Autowired
 	private WechatWalletDao dao;
