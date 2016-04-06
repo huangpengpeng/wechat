@@ -29,10 +29,10 @@ public class WechatWalletDaoImpl extends JdbcTemplateBaseDao implements WechatWa
 		}		
 		if (sqlBuilder.ifNotNull(wechatPayNo)) {
 			sqlBuilder.set("wechatPayNo", wechatPayNo);
-		}		
-		if (sqlBuilder.ifNotNull(identificationFlag)) {
-			sqlBuilder.set("identificationFlag", identificationFlag);
 		}	
+		
+		sqlBuilder.set("identificationFlag", identificationFlag);
+		
 		super.update(id, sqlBuilder);
 	}
 
