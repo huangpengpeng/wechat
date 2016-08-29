@@ -6,15 +6,17 @@ import com.wechat.entity.WechatUser;
 
 public interface WechatUserDao {
 
-	long add(WechatUser wechatUser);
+	public long add(WechatUser wechatUser);
 	
 	public WechatUser getByOpenId(Long partnerId,String openId);
 	
-	void update(Long id, Long externalNo);
+	public WechatUser get(Long id);
 	
-	public void removeBinding(Long id) ;
+	public WechatUser update(Long id, Long externalNo);
 	
-	List<WechatUser> getByExternalNo(Long externalNo);
+	public WechatUser removeBinding(Long id) ;
+	
+	public List<WechatUser> getByExternalNo(Long externalNo);
 	
 	public void delete(Long id) ;
 }

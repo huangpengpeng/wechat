@@ -19,6 +19,7 @@ import com.common.util.CryptoDesUtils;
 import com.common.util.JsonUtils;
 import com.common.util.ParamMap;
 import com.common.util.ParamentersUtils;
+import com.common.web.CookieUtils;
 import com.common.web.ResponseUtils;
 import com.common.web.WebErrors;
 import com.common.web.session.SessionProvider;
@@ -171,7 +172,6 @@ public class WechatConfigAct {
 			log.info("根据CODE{} 获取 oauth2getAccessToken refererURL {}", code, WebUtils.getRefererURL());
 			wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
 		} catch (WxErrorException e) {
-			log.error("获取微信 TOKEN 失败  code : " + code + " refererURL:" + WebUtils.getRefererURL(), e);
 			addErrorCount(request);
 		}
 		if (wxMpOAuth2AccessToken != null) {

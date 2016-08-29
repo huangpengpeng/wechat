@@ -8,7 +8,7 @@ import com.wechat.dao.WechatWalletDao;
 import com.wechat.entity.WechatWallet;
 
 @Repository
-public class WechatWalletDaoImpl extends JdbcTemplateBaseDao implements WechatWalletDao{
+public class WechatWalletDaoImpl extends JdbcTemplateBaseDao implements WechatWalletDao {
 
 	@Override
 	public long add(WechatWallet wechatWallet) {
@@ -21,18 +21,15 @@ public class WechatWalletDaoImpl extends JdbcTemplateBaseDao implements WechatWa
 	}
 
 	@Override
-	public void update(Long id, String username, String wechatPayNo,Boolean identificationFlag) {
-		SqlBuilder sqlBuilder = new SqlBuilder(
-				"update WechatWallet set gmtModify=current_timestamp()");
+	public void update(Long id, String username, String wechatPayNo, Boolean identificationFlag) {
+		SqlBuilder sqlBuilder = new SqlBuilder("update WechatWallet set gmtModify=current_timestamp()");
 		if (sqlBuilder.ifNotNull(username)) {
 			sqlBuilder.set("username", username);
-		}		
+		}
 		if (sqlBuilder.ifNotNull(wechatPayNo)) {
 			sqlBuilder.set("wechatPayNo", wechatPayNo);
-		}		
-		if (sqlBuilder.ifNotNull(identificationFlag)) {
-			sqlBuilder.set("identificationFlag", identificationFlag);
-		}	
+		}
+		sqlBuilder.set("identificationFlag", identificationFlag);
 		super.update(id, sqlBuilder);
 	}
 

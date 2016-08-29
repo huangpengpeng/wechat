@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.common.counter.manager.NumberMng;
 import com.common.jdbc.page.Pagination;
 import com.wechat.dao.ClearingWechatPaymentDao;
 import com.wechat.entity.ClearingWechatPayment;
@@ -25,8 +26,9 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 		if (clearingFee == null || clearingFee.compareTo(BigDecimal.ZERO) == 0) {
 			return null;
 		}
-		ClearingWechatPayment clearingWechatPayment = new ClearingWechatPayment(userId, null, clearingFee, null, null,
-				status, externalNo, type, allFee, remainderFee, freezeFee, ip);
+		ClearingWechatPayment clearingWechatPayment = new ClearingWechatPayment(userId,
+				numberMng.create(NumberMng.WECHAT_CLEARING_PAYMENT_PREFIX, NumberMng.N36_CHARS), null, clearingFee,
+				null, null, status, externalNo, type, allFee, remainderFee, freezeFee, ip);
 		clearingWechatPayment.init();
 		clearingWechatPayment.setId(dao.add(clearingWechatPayment));
 		return clearingWechatPayment;
@@ -53,8 +55,8 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 	}
 
 	@Override
-	public Pagination getPage(Long userId, String status, Date startCreateTime, Date endCreateTime, Integer pageNo) {
-		return dao.getPage(userId, status, startCreateTime, endCreateTime, pageNo);
+	public Pagination getPage(Long userId, String externalNo,String status, Date startCreateTime, Date endCreateTime, Integer pageNo,Integer pageSize) {
+		return dao.getPage(userId, externalNo,status,startCreateTime, endCreateTime, pageNo,pageSize);
 	}
 
 	@Override
@@ -73,7 +75,13 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 		}
 	}
 
+	@Override
+	public void update(Long id, String number) {
+		dao.update(id, number);
+	}
+	
+	@Autowired
+	private NumberMng numberMng;
 	@Autowired
 	private ClearingWechatPaymentDao dao;
-
 }

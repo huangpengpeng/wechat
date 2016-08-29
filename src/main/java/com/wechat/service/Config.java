@@ -401,7 +401,7 @@ public class Config {
 		public static String UNIFIED_ORDER_QUERY = "https://api.mch.weixin.qq.com/pay/orderquery";// 查询订单
 		public static String TRANSFERS_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers";// 查询订单
 		public static String GET_TRANSFER_INFO_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo";// 查询订单
-		public static String NOTIFY_URL = "/common/wechat_config/c.jhtml"; // 系统回调
+		public static String NOTIFY_URL = "/wechat_config/c.jhtml"; // 系统回调
 		public static String SENDREDPACK_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack";//红包
 	}
 

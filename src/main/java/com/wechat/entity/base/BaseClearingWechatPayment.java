@@ -16,11 +16,12 @@ public class BaseClearingWechatPayment extends VersionEntity{
 	
 	public BaseClearingWechatPayment(){}
 	
-	public BaseClearingWechatPayment(Long userId, Date createTime,
+	public BaseClearingWechatPayment(Long userId, String number,Date createTime,
 			BigDecimal clearingFee, Date clearingTime, String requestNo,
 			String status, String externalNo, String type, BigDecimal allFee,
 			BigDecimal remainderFee, BigDecimal freezeFee, String ip) {
 		this.setUserId(userId);
+		this.setNumber(number);
 		this.setCreateTime(createTime);
 		this.setClearingFee(clearingFee);
 		this.setClearingTime(clearingTime);
@@ -75,6 +76,12 @@ public class BaseClearingWechatPayment extends VersionEntity{
 	 * 转账类型（分账|订单推广）
 	 */
 	private String type;
+	
+	/**
+	 * 结算唯一编码
+	 */
+	@Column(unique=true)
+	private String number;
 	
 	/**
 	 * 账户总余额
@@ -194,5 +201,13 @@ public class BaseClearingWechatPayment extends VersionEntity{
 
 	public void setFreezeFee(BigDecimal freezeFee) {
 		this.freezeFee = freezeFee;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
 	}
 }

@@ -20,9 +20,11 @@ public interface ClearingWechatPaymentMng {
 	
 	void clearing(Long id,ClearingEvent clearingEvent);
 	
-	Pagination getPage(Long userId,String status,Date startCreateTime, Date endCreateTime, Integer pageNo);
+	Pagination getPage(Long userId,String externalNo,String status,Date startCreateTime, Date endCreateTime, Integer pageNo,Integer pageSize);
 	
 	void transactionalClearing(TransactionalClearing transactionalClearing);
+	
+	void update(Long id,String number);
 	
 	public static interface ClearingEvent{
 		public boolean handleEvent(ClearingWechatPayment clearingWechatPayment);

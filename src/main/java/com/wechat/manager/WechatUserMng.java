@@ -16,11 +16,11 @@ public interface WechatUserMng {
 	
 	public WechatUser getByOpenId(Long partnerId,String openId);
 	
-	public void delete(Long id);
+	public WechatUser delete(Long id);
 	
-	void update(Long id,Long externalNo);
+	WechatUser update(Long id,Long externalNo);
 	
 	List<WechatUser> getByExternalNo(Long externalNo);
 	
-	void removeBinding(Long id);
+	WechatUser removeBinding(Long id);
 }

@@ -53,10 +53,9 @@ public class ClearingWechatPaymentDaoImpl extends JdbcTemplateBaseDao implements
 	}
 
 	@Override
-	public Pagination getPage(Long userId,String status,Date startCreateTime, Date endCreateTime,
-			Integer pageNo) {
-		SqlBuilder sqlBuilder = new SqlBuilder(
-				"select * from ClearingWechatPayment where 1=1");
+	public Pagination getPage(Long userId, String externalNo, String status, Date startCreateTime, Date endCreateTime,
+			Integer pageNo, Integer pageSize) {
+		SqlBuilder sqlBuilder = new SqlBuilder("select * from ClearingWechatPayment where 1=1");
 		if (sqlBuilder.ifNotNull(startCreateTime)) {
 			sqlBuilder.andGreaterThanOrEqualTo("createTime", startCreateTime);
 		}
@@ -69,7 +68,10 @@ public class ClearingWechatPaymentDaoImpl extends JdbcTemplateBaseDao implements
 		if (sqlBuilder.ifNotNull(status)) {
 			sqlBuilder.andEqualTo("status", status);
 		}
-		return super.getPage(sqlBuilder, pageNo == null ? 1 : pageNo, 10);
+		if (sqlBuilder.ifNotNull(externalNo)) {
+			sqlBuilder.andEqualTo("externalNo", externalNo);
+		}
+		return super.getPage(sqlBuilder, pageNo == null ? 1 : pageNo, pageSize);
 	}
 
 	@Override
@@ -77,6 +79,13 @@ public class ClearingWechatPaymentDaoImpl extends JdbcTemplateBaseDao implements
 		SqlBuilder sqlBuilder = new SqlBuilder(
 				"update ClearingWechatPayment set gmtModify=current_timestamp() ");
 		sqlBuilder.set("clearingFee", clearingFee);
+		super.update(id, sqlBuilder);
+	}
+
+	@Override
+	public void update(Long id, String number) {
+		SqlBuilder sqlBuilder = new SqlBuilder("update ClearingWechatPayment set gmtModify=current_timestamp() ");
+		sqlBuilder.set("number", number);
 		super.update(id, sqlBuilder);
 	}
 }
