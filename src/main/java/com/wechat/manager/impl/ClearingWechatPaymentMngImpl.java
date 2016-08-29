@@ -14,7 +14,9 @@ import com.common.counter.manager.NumberMng;
 import com.common.jdbc.page.Pagination;
 import com.wechat.dao.ClearingWechatPaymentDao;
 import com.wechat.entity.ClearingWechatPayment;
+import com.wechat.entity.WechatWallet;
 import com.wechat.manager.ClearingWechatPaymentMng;
+import com.wechat.manager.WechatWalletMng;
 
 @Transactional(isolation = Isolation.REPEATABLE_READ)
 @Service
@@ -49,6 +51,8 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 		ClearingWechatPayment clearingWechatPayment = dao.get(id);
 		clearingWechatPayment.setRequestNo(StringUtils.remove(UUID.randomUUID().toString(), "-"));
 		dao.clearing(id, clearingWechatPayment.getRequestNo());
+		WechatWallet wallet = wechatWalletMng.getByexternalNo(clearingWechatPayment.getUserId().toString());
+		wechatWalletMng.update(wallet.getId(), wallet.getUsername(), wallet.getWechatPayNo(), true);
 		if (!clearingEvent.handleEvent(clearingWechatPayment)) {
 			throw new IllegalStateException("转账失败");
 		}
@@ -82,6 +86,8 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 	
 	@Autowired
 	private NumberMng numberMng;
+	@Autowired
+	private WechatWalletMng wechatWalletMng;
 	@Autowired
 	private ClearingWechatPaymentDao dao;
 }
