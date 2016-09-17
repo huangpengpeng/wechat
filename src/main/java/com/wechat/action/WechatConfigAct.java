@@ -75,29 +75,27 @@ public class WechatConfigAct {
 	}
 
 	/**
-	 * 页面调用例子： <script
-	 * src="http://static.yoro.com/javascripts/wechat-1.0.js"></script> <script
-	 * type="text/javascript"> var shareConfig = { title: '${shop.title}', desc:
-	 * '淘遍全球美妆，在这里您将看到全球精品美妆爆款，所有精品均有品牌方直接授权，快来体验吧。', link: location.href,
-	 * imgUrl: 'http://static.yoro.com/118175f0bd4f417eb004f7786bc1a83e.jpg',
-	 * pId:"1" }; </script>
+	 * 页面调用例子：
+	 * <script src="http://static.yoro.com/javascripts/wechat-1.0.js"></script>
+	 * <script type="text/javascript"> var shareConfig = { title:
+	 * '${shop.title}', desc: '淘遍全球美妆，在这里您将看到全球精品美妆爆款，所有精品均有品牌方直接授权，快来体验吧。',
+	 * link: location.href, imgUrl:
+	 * 'http://static.yoro.com/118175f0bd4f417eb004f7786bc1a83e.jpg', pId:"1"
+	 * }; </script>
 	 * 
 	 * @param pId
 	 *            合作伙伴编号
 	 */
-	@RequestMapping(value = "/wechat_config/config.html")
-	public void config(HttpServletRequest request, ModelMap model, String url,
-			Long pId) {
+	@RequestMapping(value = { "/wechat_config/config_w.html", "/wechat_config/config.html" })
+	public void config(HttpServletRequest request, ModelMap model, String url, Long pId) {
 		WebErrors errors = vldExist(request, pId);
 		if (!errors.hasErrors()) {
 			try {
 				Partner partner = partnerMng.get(pId);
-				WxMpService wxMpService = wechatConfigSvc.createWxMpService(
-						partner.getAppId(), partner.getSecretKey(),
+				WxMpService wxMpService = wechatConfigSvc.createWxMpService(partner.getAppId(), partner.getSecretKey(),
 						partner.getToken());
 				wxMpService.getJsapiTicket();
-				WxJsapiSignature signature = wxMpService
-						.createJsapiSignature(url);
+				WxJsapiSignature signature = wxMpService.createJsapiSignature(url);
 				model.addAttribute("url", url);
 				model.addAttribute("nonceStr", signature.getNoncestr());
 				model.addAttribute("timestamp", signature.getTimestamp());
