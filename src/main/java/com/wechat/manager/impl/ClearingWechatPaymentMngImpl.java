@@ -29,7 +29,7 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 			return null;
 		}
 		ClearingWechatPayment clearingWechatPayment = new ClearingWechatPayment(userId,
-				numberMng.create(NumberMng.WECHAT_CLEARING_PAYMENT_PREFIX, NumberMng.N36_CHARS), null, clearingFee,
+				numberMng.quick(NumberMng.WECHAT_CLEARING_PAYMENT_PREFIX), null, clearingFee,
 				null, null, status, externalNo, type, allFee, remainderFee, freezeFee, ip);
 		clearingWechatPayment.init();
 		clearingWechatPayment.setId(dao.add(clearingWechatPayment));

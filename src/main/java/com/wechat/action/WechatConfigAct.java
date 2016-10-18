@@ -19,7 +19,6 @@ import com.common.util.CryptoDesUtils;
 import com.common.util.JsonUtils;
 import com.common.util.ParamMap;
 import com.common.util.ParamentersUtils;
-import com.common.web.CookieUtils;
 import com.common.web.ResponseUtils;
 import com.common.web.WebErrors;
 import com.common.web.session.SessionProvider;
@@ -111,36 +110,31 @@ public class WechatConfigAct {
 		}
 	}
 
-	@RequestMapping(value = "/wechat_config/oauth2-{pId}-{scope}-{SESSION_NAME}.html")
-	public void oauthSubmit(HttpServletRequest request,
-			HttpServletResponse response, ModelMap model,
-			@PathVariable("pId") Long pId, String URL,
-			@PathVariable("scope") String scope,
-			@PathVariable("SESSION_NAME") String SESSION_NAME) throws Exception {
+	@RequestMapping(value = "/wechat_config/oauth2-{pId}-{scope}-{SESSION_NAME}-{redirectURI}.html")
+	public void oauthSubmit(HttpServletRequest request, HttpServletResponse response, ModelMap model,
+			@PathVariable("pId") Long pId, String URL, @PathVariable("scope") String scope,
+			@PathVariable("SESSION_NAME") String SESSION_NAME, @PathVariable("redirectURI") String redirectURI)
+			throws Exception {
 		URL = WebUtils.getRequestURQ(request);
 		log.info("oauth url:{}", URL);
 		if (StringUtils.isBlank(URL)) {
 			URL = "/";
 		}
 		Partner partner = partnerMng.get(pId);
-		WxMpService wxMpService = wechatConfigSvc.createWxMpService(
-				partner.getAppId(), partner.getSecretKey(), partner.getToken());
-		ParamMap<String, Object> params = new ParamMap<String, Object>()
-				.add("_URL", URL).add("_SESSION_NAME", SESSION_NAME)
-				.add("_PID", pId);
-		response.sendRedirect(wxMpService.oauth2buildAuthorizationUrl(
-				"http://"
-						+ partner.getRealm()
-						+ "/login_wechat"
-						+ CryptoDesUtils.encrypt(
-								JsonUtils.renderJson(params.getPraamMap()),
-								CryptoDesUtils.PASSWORD_CRYPT_KEY) + ".html",
-				scope == null ? WxConsts.OAUTH2_SCOPE_BASE : scope,
-				CryptoDesUtils.encrypt(JsonUtils
-						.renderJson(new ParamMap<String, String>().add(
-								"serviceName", WebUtils.getRealm(request))
-								.getPraamMap()),
-						CryptoDesUtils.PASSWORD_CRYPT_KEY)));
+		WxMpService wxMpService = wechatConfigSvc.createWxMpService(partner.getAppId(), partner.getSecretKey(),
+				partner.getToken());
+		ParamMap<String, Object> params = new ParamMap<String, Object>().add("_URL", URL)
+				.add("_SESSION_NAME", SESSION_NAME).add("_PID", pId);
+		if (StringUtils.isBlank(redirectURI)) {
+			redirectURI = "http://" + partner.getRealm() + "/login_wechat" + CryptoDesUtils
+					.encrypt(JsonUtils.renderJson(params.getPraamMap()), CryptoDesUtils.PASSWORD_CRYPT_KEY) + ".html";
+		}
+		response.sendRedirect(
+				wxMpService.oauth2buildAuthorizationUrl(redirectURI, scope == null ? WxConsts.OAUTH2_SCOPE_BASE : scope,
+						CryptoDesUtils.encrypt(
+								JsonUtils.renderJson(new ParamMap<String, String>()
+										.add("serviceName", WebUtils.getRealm(request)).getPraamMap()),
+								CryptoDesUtils.PASSWORD_CRYPT_KEY)));
 	}
 
 	@RequestMapping(value = { "/login_wechat{params}.html" })
