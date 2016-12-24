@@ -1,7 +1,5 @@
 package com.wechat.action;
 
-import static com.wechat.action.WechatConfigAct.WECHAT_OPEN_ID;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -16,34 +14,28 @@ import com.wechat.entity.WechatUser;
 import com.wechat.manager.PartnerMng;
 import com.wechat.manager.WechatUserMng;
 
-import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
-
 @Controller
 public class WechatUserAct {
 
 
 	@RequestMapping(value = "/wechat_user/logout.html")
-	public void logout(HttpServletRequest request, ModelMap model, Long pId,
+	public void logout(HttpServletRequest request, HttpSession session, ModelMap model, Long pId,
 			@CookieValue(value = "OPEN_ID", required = false) String openId) {
-		WebErrors errors = validate(request, pId);
+		WebErrors errors = validate(request, pId,openId);
 		if (!errors.hasErrors()) {
-			HttpSession session = request.getSession();
 			if (openId != null) {
 				WechatUser wechatUser = manager.getByOpenId(pId, openId);
 				manager.removeBinding(wechatUser.getId());
 			}
-			session.invalidate();
 		}
 		if (errors.hasErrors()) {
 			errors.toModel(model);
 		}
 	}
 
-	private WebErrors validate(HttpServletRequest request, Long pId) {
-		HttpSession session = request.getSession();
+	private WebErrors validate(HttpServletRequest request, Long pId,String openId) {
 		WebErrors errors = WebErrors.create(request);
-		WxMpOAuth2AccessToken auth2AccessToken = (WxMpOAuth2AccessToken) session.getAttribute(WECHAT_OPEN_ID);
-		errors.ifNull(auth2AccessToken, "微信授权");
+		errors.ifNull(openId, "微信授权");
 		errors.ifNull(pId, "合作伙伴编号");
 		if (errors.hasErrors()) {
 			return errors;
@@ -52,7 +44,7 @@ public class WechatUserAct {
 			errors.addErrorString("合作伙伴编号不存在");
 			return errors;
 		}
-		if (manager.getByOpenId(pId, auth2AccessToken.getOpenId()) == null) {
+		if (manager.getByOpenId(pId, openId) == null) {
 			errors.addErrorString("当前授权编号不存在");
 		}
 		return errors;

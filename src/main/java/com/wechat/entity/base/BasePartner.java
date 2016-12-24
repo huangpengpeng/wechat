@@ -2,17 +2,16 @@ package com.wechat.entity.base;
 
 import java.util.Date;
 
-import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
 import com.common.jdbc.BaseEntity;
+import com.common.jdbc.Comment;
+import com.common.jdbc.VersionEntity;
 
 /**
  * 微信公众号合作方
- * 
- * @author yz
- *
  */
-@javax.persistence.MappedSuperclass
+@MappedSuperclass
 public class BasePartner extends BaseEntity {
 
 	private static final long serialVersionUID = -5086179935270931118L;
@@ -26,53 +25,35 @@ public class BasePartner extends BaseEntity {
 		this.setToken(token);
 	}
 
-	/**
-	 * 公众号名称
-	 */
-	@Column(unique = true)
+	@Comment(value={"公众号名称"})
 	private String name;
 
-	/**
-	 * 公众号AppId
-	 */
-	@Column(unique=true)
+	@Comment(value={"公众号AppId"})
 	private String appId;
 
-	/**
-	 * 公众号密钥
-	 */
+	@Comment(value={"公众号密钥"})
 	private String secretKey;
 	
-	/**
-	 * 商户编号
-	 */
+	@Comment(value={" 商户编号"})
 	private String mchId;
 	
-	/**
-	 * 签名KEY
-	 */
+	@Comment(value={"签名KEY"})
 	private String signKey;
 	
-	/**
-	 * 支付设备号
-	 */
+	@Comment(value={"支付设备号"})
 	private String deviceInfo;
 	
-	/**
-	 * 公众号授权域名
-	 */
+	@Comment(value={"公众号授权域名"})
 	private String realm;
 
-	/**
-	 * 公众号填写的token
-	 */
-	@Column(unique=true)
+	@Comment(value={"公众号填写的token"})
 	private String token;
 
-	/**
-	 * 注册时间
-	 */
+	@Comment(value={"注册时间"})
 	private Date registerTime;
+	
+	@Comment(value="回调地址")
+	private String callUrl;
 
 	public String getAppId() {
 		return appId;
@@ -144,5 +125,13 @@ public class BasePartner extends BaseEntity {
 
 	public void setRealm(String realm) {
 		this.realm = realm;
+	}
+
+	public String getCallUrl() {
+		return callUrl;
+	}
+
+	public void setCallUrl(String callUrl) {
+		this.callUrl = callUrl;
 	}
 }
