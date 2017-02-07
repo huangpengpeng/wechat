@@ -29,6 +29,7 @@ public class BaseWeiXin extends VersionEntity {
 	private String openid;
 	
 	@Comment(value="微信用户unionid")
+	@Column(unique=true)
 	private String unionid;
 	
 	@Comment(value="创建时间")
