@@ -1,6 +1,7 @@
 package com.wechat.dao.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
@@ -38,7 +39,7 @@ public class PartnerDaoImpl extends JdbcTemplateBaseDao implements PartnerDao {
 
 	@Override
 	public void update(Long id, String name, String appId, String secretKey, String mchId, String signKey,
-			String deviceInfo, String realm, String token, Date registerTime, String callUrl) {
+			String deviceInfo, String realm, String token, Date registerTime, String callUrl,Boolean ifPushFlg) {
 		SqlBuilder sqlBuilder = new SqlBuilder("update Partner set gmtModify=current_timestamp() ");
 		if (sqlBuilder.ifNotNull(name)) {
 			sqlBuilder.set("name", name);
@@ -60,11 +61,20 @@ public class PartnerDaoImpl extends JdbcTemplateBaseDao implements PartnerDao {
 		}
 		sqlBuilder.set("registerTime", registerTime);
 		sqlBuilder.set("callUrl", callUrl);
+		if (sqlBuilder.ifNotNull(ifPushFlg)) {
+			sqlBuilder.set("ifPushFlg",ifPushFlg);
+		}
 		super.update(id, sqlBuilder);
 	}
 
 	@Override
 	protected Class<?> getEntityClass() {
 		return Partner.class;
+	}
+
+	@Override
+	public List<Partner> getList() {
+		SqlBuilder sqlBuilder = new SqlBuilder("select * from Partner where 1=1");
+		return super.query(sqlBuilder);
 	}
 }

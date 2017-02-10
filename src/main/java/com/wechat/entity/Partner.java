@@ -13,8 +13,8 @@ public class Partner extends BasePartner {
 	}
 
 	public Partner(String name, String appId, String secretKey, String mchId, String signKey, String deviceInfo,
-			String realm, String token, Date registerTime, String callUrl) {
-		super(name, appId, secretKey, mchId, signKey, deviceInfo, realm, token, registerTime, callUrl);
+			String realm, String token, Date registerTime, String callUrl,Boolean ifPushFlg) {
+		super(name, appId, secretKey, mchId, signKey, deviceInfo, realm, token, registerTime, callUrl,ifPushFlg);
 	}
 
 	public void init() {

@@ -19,7 +19,7 @@ public class BasePartner extends BaseEntity {
 	
 
 	public BasePartner(String name, String appId, String secretKey, String mchId, String signKey, String deviceInfo,
-			String realm, String token, Date registerTime, String callUrl) {
+			String realm, String token, Date registerTime, String callUrl,Boolean ifPushFlg) {
 		this.name = name;
 		this.appId = appId;
 		this.secretKey = secretKey;
@@ -30,6 +30,7 @@ public class BasePartner extends BaseEntity {
 		this.token = token;
 		this.registerTime = registerTime;
 		this.callUrl = callUrl;
+		this.ifPushFlg=ifPushFlg;
 	}
 
 
@@ -62,6 +63,9 @@ public class BasePartner extends BaseEntity {
 	
 	@Comment(value="回调地址")
 	private String callUrl;
+	
+	@Comment(value = "是否推送")
+	private Boolean ifPushFlg;
 
 	public String getName() {
 		return name;
@@ -135,6 +139,16 @@ public class BasePartner extends BaseEntity {
 
 	public String getToken() {
 		return token;
+	}
+
+
+	public Boolean getIfPushFlg() {
+		return ifPushFlg;
+	}
+
+
+	public void setIfPushFlg(Boolean ifPushFlg) {
+		this.ifPushFlg = ifPushFlg;
 	}
 
 
