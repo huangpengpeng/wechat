@@ -11,4 +11,6 @@ public interface QrcodeMng {
 	Qrcode get(Long id);
 	
 	Qrcode getBySign(Long partnerId, String sign);
+	
+	
 }

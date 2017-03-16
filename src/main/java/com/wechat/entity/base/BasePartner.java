@@ -6,7 +6,6 @@ import javax.persistence.MappedSuperclass;
 
 import com.common.jdbc.BaseEntity;
 import com.common.jdbc.Comment;
-import com.common.jdbc.VersionEntity;
 
 /**
  * 微信公众号合作方
@@ -18,12 +17,22 @@ public class BasePartner extends BaseEntity {
 
 	public BasePartner(){}
 	
-	public BasePartner(String name, String appId, String secretKey, String token) {
-		this.setName(name);
-		this.setAppId(appId);
-		this.setSecretKey(secretKey);
-		this.setToken(token);
+
+	public BasePartner(String name, String appId, String secretKey, String mchId, String signKey, String deviceInfo,
+			String realm, String token, Date registerTime, String callUrl,Boolean ifPushFlg) {
+		this.name = name;
+		this.appId = appId;
+		this.secretKey = secretKey;
+		this.mchId = mchId;
+		this.signKey = signKey;
+		this.deviceInfo = deviceInfo;
+		this.realm = realm;
+		this.token = token;
+		this.registerTime = registerTime;
+		this.callUrl = callUrl;
+		this.ifPushFlg=ifPushFlg;
 	}
+
 
 	@Comment(value={"公众号名称"})
 	private String name;
@@ -54,84 +63,117 @@ public class BasePartner extends BaseEntity {
 	
 	@Comment(value="回调地址")
 	private String callUrl;
-
-	public String getAppId() {
-		return appId;
-	}
-
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
+	
+	@Comment(value = "是否推送")
+	private Boolean ifPushFlg;
 
 	public String getName() {
 		return name;
 	}
 
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
+
+	public String getAppId() {
+		return appId;
+	}
+
+
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
+
 
 	public String getSecretKey() {
 		return secretKey;
 	}
 
+
 	public void setSecretKey(String secretKey) {
 		this.secretKey = secretKey;
 	}
 
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public Date getRegisterTime() {
-		return registerTime;
-	}
-
-	public void setRegisterTime(Date registerTime) {
-		this.registerTime = registerTime;
-	}
 
 	public String getMchId() {
 		return mchId;
 	}
 
+
 	public void setMchId(String mchId) {
 		this.mchId = mchId;
 	}
+
 
 	public String getSignKey() {
 		return signKey;
 	}
 
+
 	public void setSignKey(String signKey) {
 		this.signKey = signKey;
 	}
+
 
 	public String getDeviceInfo() {
 		return deviceInfo;
 	}
 
+
 	public void setDeviceInfo(String deviceInfo) {
 		this.deviceInfo = deviceInfo;
 	}
+
 
 	public String getRealm() {
 		return realm;
 	}
 
+
 	public void setRealm(String realm) {
 		this.realm = realm;
 	}
+
+
+	public String getToken() {
+		return token;
+	}
+
+
+	public Boolean getIfPushFlg() {
+		return ifPushFlg;
+	}
+
+
+	public void setIfPushFlg(Boolean ifPushFlg) {
+		this.ifPushFlg = ifPushFlg;
+	}
+
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+
+	public Date getRegisterTime() {
+		return registerTime;
+	}
+
+
+	public void setRegisterTime(Date registerTime) {
+		this.registerTime = registerTime;
+	}
+
 
 	public String getCallUrl() {
 		return callUrl;
 	}
 
+
 	public void setCallUrl(String callUrl) {
 		this.callUrl = callUrl;
 	}
+	
 }
