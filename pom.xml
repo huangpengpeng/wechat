@@ -4,7 +4,7 @@
 	<groupId>com</groupId>
 	<artifactId>wechat</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>V25.0.1</version>
 	<name>wechat Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 
@@ -83,7 +83,7 @@
 		<dependency>
 			<groupId>com</groupId>
 			<artifactId>common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>V30.0.4</version>
 		</dependency>
 
 		<dependency>

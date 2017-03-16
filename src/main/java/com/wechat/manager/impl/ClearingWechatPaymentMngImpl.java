@@ -51,8 +51,6 @@ public class ClearingWechatPaymentMngImpl implements ClearingWechatPaymentMng {
 		ClearingWechatPayment clearingWechatPayment = dao.get(id);
 		clearingWechatPayment.setRequestNo(StringUtils.remove(UUID.randomUUID().toString(), "-"));
 		dao.clearing(id, clearingWechatPayment.getRequestNo());
-		WechatWallet wallet = wechatWalletMng.getByexternalNo(clearingWechatPayment.getUserId().toString());
-		wechatWalletMng.update(wallet.getId(), wallet.getUsername(), wallet.getWechatPayNo(), true);
 		if (!clearingEvent.handleEvent(clearingWechatPayment)) {
 			throw new IllegalStateException("转账失败");
 		}
