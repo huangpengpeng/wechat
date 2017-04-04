@@ -16,7 +16,7 @@
 		<repository>
 			<id>nexus</id>
 			<name>私有maven仓库地址</name>
-			<url>http://maven.weimaodian.com/content/groups/public</url>
+			<url>http://121.40.210.184:8081/nexus/content/groups/public</url>
 		</repository>
 
 
@@ -83,7 +83,7 @@
 		<dependency>
 			<groupId>com</groupId>
 			<artifactId>common</artifactId>
-			<version>V30.0.4</version>
+			<version>V30.0.5</version>
 		</dependency>
 
 		<dependency>
