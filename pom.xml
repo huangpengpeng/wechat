@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>net.sf.jsqlparser</groupId>
 			<artifactId>jsqlparser</artifactId>
-			<version>0.7</version>
+			<version>V0.7-en</version>
 		</dependency>
 
 		<dependency>
