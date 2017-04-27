@@ -391,7 +391,7 @@ public class Config {
 	}
 
 	/**
-	 * 易宝调用所用到的地址
+	 * 第三方调用所用到的地址
 	 * 
 	 * @author zoro
 	 *
