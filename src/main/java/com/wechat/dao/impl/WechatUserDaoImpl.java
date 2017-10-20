@@ -6,9 +6,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Repository;
 
-import com.common.aop_msg.New;
 import com.common.jdbc.JdbcTemplateBaseDao;
 import com.common.jdbc.SqlBuilder;
+import com.common.jms.New;
 import com.wechat.dao.WechatUserDao;
 import com.wechat.entity.WechatUser;
 

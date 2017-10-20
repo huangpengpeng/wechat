@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.common.aop_msg.Message;
 import com.wechat.dao.WechatUserDao;
 import com.wechat.entity.WechatUser;
 import com.wechat.manager.WechatUserMng;
@@ -58,7 +57,6 @@ public class WechatUserMngImpl implements WechatUserMng {
 		return dao.getByExternalNo(externalNo);
 	}
 
-	@Message(name = { WechatUserMng.MSG_WECHAT_USER_REGISTER_SUBMIT })
 	@Override
 	public Map<String, Object> register(Long partnerId, Long externalNo,
 			String openId, Long pId) {
